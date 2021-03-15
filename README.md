@@ -6,7 +6,7 @@ The Tique Case is an open-source Bitcoin SV web wallet to send and receive Jigs 
 
 Tique Case is a 100% client-side wallet that requires no back-end, relying only on external APIs such as Run Connect or MatterCloud to interact with the blockchain.
 
-Private keys and the wallet's seed phrase are stored in the browser (localStorage) and never exposed externally.
+Private keys and the wallet's seed phrase are stored in the browser's ```localStorage``` and never exposed externally.
 
 The intention of this wallet is to provide an open-sourced wallet that allows basic management of Jigs and Fungible tokens with the primary purposes of bootstraping development on the Run protocol, as well as giving services the ability to leverage Run tokens in their applications.
 
@@ -47,7 +47,7 @@ In scripts/config.js the following configuration settings are available:
 | feePerKb | Satoshis per kilobyte to pay for transactions | 500 | Lower than 500 may not be accepted by the network |
 | app | See [here](https://run.network/docs/#api-reference-run-app) for details. | Tique Case | String of application name |
 | splits | Number of UTXOs to split purse outputs into | 1 | Integer value, ex. 10 |
-| api | Blockchain API to fetch Run transaction from | run | 'run', 'mattercloud' or 'whatsonchain' |
+| api | Blockchain API to fetch Run transaction from | 'run' | 'run', 'mattercloud' or 'whatsonchain' |
 | bc | Blockchain API for the purse wallet | 'mattercloud' | 'run', 'mattercloud' or 'whatsonchain'  |
 | timeout | Timeout for all Run action in ms | 10000 | 60000 |
 | feeThreshold | Threshold of satoshi amount to fetch UTXOs when paying for transactions | 1.1 | Ex. If tx cost is 5000, get enough UTXOs to pay for 5500 satoshis |
