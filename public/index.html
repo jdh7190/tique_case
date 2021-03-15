@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Tique Case</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Tique Case"/>
+        <meta property="og:type" content="website">
+        <meta property="og:image:url" content="./images/logo-512x512.png">
+        <meta property="og:image" content="./images/logo-512x512.png">
+        <meta property="og:description" content="Manage your Jigs and Tokens!">
+        <meta name="theme-color" content="#D3D3D3">
+        <meta name="description" content="Manage your Jigs and Tokens!">
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:creator" content="@cryptoacorns"/>
+        <meta name="twitter:image" content="https://tique.run/images/logo-512x512.png"/>
+        <meta name="description" content="Manage your Jigs and Tokens!">
+        <meta name="apple-mobile-web-app-title" content="Tique Case">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="stylesheet" type="text/css" href="./styles/style.css">
+        <link rel="manifest" href="./manifest.json">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="apple-touch-icon" href="./images/apple-touch-icon-180x180.png">
+        <link rel="icon" href="./favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&family=Roboto+Slab:wght@300&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <a class="skip-link" href="#purselink" alt="Purse link">#</a>
+        <div class="page center">
+            <div class="extension">
+                <div id="purse">
+                    <div class="purseCon" id="purselink">
+                        <img src="./images/Purse.svg" class="purselogo" alt="Purse">
+                    </div>
+                    <a href="./settings.html"><img src="./images/settings-24px.svg" class="settings" alt="Settings"></a>
+                    <div class="clip" id="sendbsv"><div class="sendbsv">SEND BSV</div></div>
+                    <div class="purse">
+                        <div class="flip-card" id="flipCard">
+                            <div class="flip-card-inner" id="flipInner">
+                                <div class="card" id="card">
+                                        <div class="purseLabel" id="walletLabel">Purse Balance</div>
+                                        <div class="purseBalance" id="bsvBalance"></div>
+                                        <div class="qrcode" id="qrAddr"></div>
+                                        <div class="purseAddr" id="addr">
+                                            <input type="text" id="purseAddr" class="addrInput" readonly>
+                                            <img src="./images/copy.svg" class="copy" id="copyAddr" alt="copy">
+                                        </div>
+                                        <div class="flip"><img src="./images/flip.svg" id="flip" alt="flip"></div>
+                                        <!-- <div class="transfer"><img src="./images/transfer.svg" alt="transfer" id="pTransfer"></div> -->
+                                </div>
+                                <div class="ocard" id="ownerCard">
+                                    <div class="black"></div>
+                                    <div class="ownerLabel" id="walletLabel">Owner Address</div>
+                                    <div class="jigsBalance" id="jigBalance"></div>
+                                    <div class="oqrcode" id="oqrAddr"></div>
+                                    <div class="ownerAddr" id="oaddr">
+                                        <input type="text" id="ownerAddr" class="oaddrInput" readonly>
+                                        <img src="./images/copy.svg" class="ocopy" id="ocopyAddr" alt="copy">
+                                    </div>
+                                    <div class="flip"><img src="./images/flip.svg" id="oflip" alt="flip"></div>
+                                    <!-- <div class="transfer"><img src="./images/transfer.svg" alt="transfer" id="oTransfer"></div> -->
+                                </div>
+                            <div>
+                        </div>
+                    </div>
+                </div>
+                <div class="jigs">
+                    <div class="titleCon"><img src="./images/Jigs.svg" class="jigslogo" alt="Jigs"></div>
+                    <button class="jigsBtn" type="button" id="sendjigs">SEND JIGS</button>
+                    <div class="jigsList" id="tokens"><ul class="list" id="list"></ul></div>
+                </div>
+            </div>
+            <div id="modal" class="modal center">
+                <div class="modal-content">
+                   <span id='closem' class="close">&times;</span>
+                   <p id="msg"></p>
+                </div>
+             </div>
+        </div>
+    </body>
+    <script>
+        var script;
+        var modal = document.getElementById('modal');
+        var span = document.getElementById('closem');
+        span.onclick = () => {
+            modal.style.display = 'none';
+            flip();
+        }
+        window.onclick = event => {
+            if (event.target == modal) {
+                modal.style.display = "none";
+                flip();
+            }
+        }
+        const initScript = () => {
+            if (!localStorage.getItem('seed')) {
+                document.getElementById('msg').innerHTML = `<p>Welcome to your Tique Case!</p>
+
+<p>The Tique Case is a wallet that manages your Tokens and Jigs!</p>
+
+<p>This wallet has 2 sets of keys, the purse and <strong>owner</strong>.</p>
+
+<p>To receive Tokens & Jigs, click the flip <img src="./images/flip.svg" id="flip" alt="flip"> icon at the bottom left of the card to reveal your owner address.</p>
+
+<p>To send jigs, click a row in the Jigs section -> Send Jigs.</p>
+
+<p>You must have funded your purse with Bitcoin SV before you can send jigs!</p>`;
+                modal.style.display = 'block';
+                var head = document.getElementsByTagName('head')[0];
+                script = document.createElement('script');
+                script.src = 'scripts/bsv-mnemonic.min.js';
+                head.appendChild(script);
+            }
+        }
+        initScript();
+        if ('serviceWorker' in navigator) {
+            navigator.serviceWorker.register('./serviceworker.js', { scope: './' })
+            .then((registration) => {console.log('Registration successful, scope is:', registration.scope)})
+            .catch((error) => {console.log('Service worker registration failed, error:', error)});
+        }
+    </script>
+    <script src="./scripts/bsv.browser.min.js" defer></script>
+    <script src="./scripts/config.js" defer></script>
+    <script src="./scripts/run.browser.min.js" defer></script>
+    <script src="./scripts/twemoji.min.js"></script>
+    <script src="./scripts/helpers.js"></script>
+    <script src="./scripts/purse.js" defer></script>
+    <script src="./scripts/qrcode.min.js"></script>
+    <script src="./scripts/wallet.js" defer></script>
+</html>

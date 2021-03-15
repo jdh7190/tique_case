@@ -1,0 +1,37 @@
+{
+    "name": "Tique Case",
+    "short_name": "Tique Case",
+    "orientation": "portrait",
+    "scope": "./",
+    "icons": [
+        {
+            "src": "images/logo-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        },
+        {
+            "src": "images/logo-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "start_url": "./index.html",
+    "theme_color": "#D3D3D3",
+    "background_color": "#D3D3D3",
+    "display": "standalone",
+    "shortcuts": [
+        {
+            "name": "Settings",
+            "description": "View Settings page",
+            "url": "./settings.html",
+            "icons": [{ "src": "/images/android-96x96.png", "sizes": "96x96" }]
+        },
+        {
+            "name": "Send BSV",
+            "description": "Send BSV to a Friend",
+            "url": "./sendbsv.html",
+            "icons": [{ "src": "/images/android-96x96.png", "sizes": "96x96" }]
+        }
+    ]
+}

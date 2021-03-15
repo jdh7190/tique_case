@@ -1,0 +1,59 @@
+<html lang="en">
+    <head>
+        <title>Send BSV - Tique Case</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Tique Case"/>
+        <meta property="og:type" content="website">
+        <meta property="og:image:url" content="./images/pwa-512x512.png">
+        <meta property="og:description" content="Send BSV - Manage your Jigs and Tokens!">
+        <meta name="theme-color" content="#D3D3D3">
+        <meta name="description" content="Send BSV - Manage your Jigs and Tokens!">
+        <meta name="apple-mobile-web-app-title" content="Tique Case">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="manifest" href="./manifest.json">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="apple-touch-icon" href="./images/apple-touch-icon-180x180.png">
+        <link rel="icon" href="./favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+        <link rel="stylesheet" type="text/css" href="./styles/sendbsv.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&family=Roboto+Slab:wght@300&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="page center">
+            <div class="extension">
+                <a href="javascript:history.back()"><img src="./images/back.svg" class="back" id="back"></a>
+                <div class="purseCon">
+                    <a href="./sendbsv.html"><img src="images/Purse.svg" class="purselogo" alt="Purse"></a>
+                </div>
+                <div class="jigs">
+                    <div id="jigscon">
+                        <div class="label curBal">Current Balance</div>
+                        <div class="jigsList" id="tokens"></div>
+                        <div class="label amtlabel">Amount to Send</div>
+                        <div>
+                            <input type="number" class="sendAmt" id="sendamt" step="0.0001">
+                        </div>
+                        <div class="label addrlabel">Paymail / Address</div>
+                        <div>
+                            <input type="text" class="addrInput" id='sendaddr'>
+                        </div>
+                        <div class="send">
+                            <button class="jigsBtn" type="button" id="sendbsv">SEND</button>
+                        </div>
+                    </div>
+                    <div class="check" id="confirm">
+                        <a href="" id="confirmation" target="_blank" rel="noreferrer"><img src="./images/check.svg"></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="./scripts/bsv.browser.min.js"></script>
+    <script src="./scripts/config.js"></script>
+    <script src="./scripts/run.browser.min.js"></script>
+    <script src="./scripts/helpers.js"></script>
+    <script src="./scripts/purse.js"></script>
+    <script src="./scripts/sendbsv.js"></script>
+</html>

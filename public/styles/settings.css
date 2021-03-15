@@ -1,0 +1,116 @@
+.center {
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+}
+.page {
+    width: 350px;
+}
+.settings {
+    position: relative;
+}
+.back {
+    top: 12px;
+    left: 20px;
+    position: absolute;
+    cursor: pointer;
+}
+.seedCon {
+    text-align: center;
+    margin-top: 6px;
+}
+.title {
+    font-family: Permanent Marker;
+    font-size: 24px;
+    line-height: 35px;
+    align-items: center;
+    text-align: center;
+    color: #000000;
+    text-decoration: none;
+}
+.box {
+    position: absolute;
+    width: 114px;
+    height: 114px;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    filter: drop-shadow(4px 4px 4px rgba(244, 197, 29, 0.5));
+}
+.box:hover {
+    background: rgba(244, 197, 29, 0.5);
+    cursor: pointer;
+}
+.backup {
+    left: 41px;
+    top: 66px;
+}
+.restore {
+    left: 195px;
+    top: 66px;
+}
+.seedText {
+    position: absolute;
+    font-family: Permanent Marker;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 20px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    color: #000000;
+    top: 52px
+}
+.icon {
+    position: absolute;
+    top: 24px;
+    left: 48px;
+}
+.entryCon {
+    display: none;
+}
+.entry {
+    position: absolute;
+    width: 280px;
+    left: 42px;
+    top: 248px;
+    font-family: Courier;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 14px;
+    line-height: 16px;
+    display: flex;
+    align-items: center;
+    text-align: center;
+    height: 105px;
+    color: #000000;
+}
+.disabled {
+    background: #E5E5E5;
+}
+.restoreBtn {
+    display: none;
+}
+.jigsBtn {
+    position: relative;
+    width: 67px;
+    height: 64px;
+    top: 315px;
+    left: -50px;
+    background: #F4C51D;
+    border: 1px solid #000000;
+    border-radius: 50%;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    font-family: 'Roboto Slab', serif;
+    font-size: 12px;
+    line-height: 16px;
+    cursor: pointer;
+}
+.dropdown {
+    font-family: Permanent Marker;
+    position: absolute;
+    top: 200px;
+    left: 62px;
+}

@@ -1,0 +1,62 @@
+<html lang="en">
+    <head>
+        <title>Settings - Tique Case</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Tique Case"/>
+        <meta property="og:type" content="website">
+        <meta property="og:image:url" content="./images/pwa-512x512.png">
+        <meta property="og:description" content="Settings - Manage your Jigs and Tokens!">
+        <meta name="theme-color" content="#D3D3D3">
+        <meta name="description" content="Settings - Manage your Jigs and Tokens!">
+        <meta name="apple-mobile-web-app-title" content="Tique Case">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="manifest" href="./manifest.json">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="apple-touch-icon" href="./images/apple-touch-icon-180x180.png">
+        <link rel="icon" href="./favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+        <link rel="stylesheet" type="text/css" href="./styles/settings.css">
+        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&family=Roboto+Slab:wght@300&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div class="page center">
+            <div class="settings">
+                <a href="javascript:history.back()"><img src="./images/back.svg" class="back" id="back"></a>
+                <div class="seedCon">
+                    <a href="./settings.html" class="title">Settings</a>
+                </div>
+                <div class="box backup" id="backup">
+                    <img src="./images/backup.svg" class="icon">
+                    <div class="seedText">Backup Seed Phrase</div>
+                </div>
+                <div class="box restore" id="restore">
+                    <img src="./images/restore.svg" class="icon">
+                    <div class="seedText">Restore Seed Phrase</div>
+                    <div class="restoreBtn" id="restorebtn">
+                        <button class="jigsBtn" type="button" id="sendbsv">RESTORE</button>
+                    </div>
+                </div>
+                <div class="dropdown">
+                    <label for="trust">Trust Configuration:</label>
+                    <select required id="trust">
+                        <option value="0">Default</option>
+                        <option value="1">None</option>
+                        <option value="2">All</option>
+                    </select>
+                </div>
+                <div class="entryCon" id="entryCon">
+                    <textarea rows="4" cols="50" id="entry" class="entry" autocomplete="off"></textarea>
+                </div>
+            </div>
+        </div>
+    </body>
+    <script src="./scripts/bsv.browser.min.js"></script>
+    <script src="./scripts/config.js"></script>
+    <script src="./scripts/run.browser.min.js"></script>
+    <script src="./scripts/bsv-mnemonic.min.js"></script>
+    <script src="./scripts/helpers.js"></script>
+    <script src="./scripts/purse.js"></script>
+    <script src="./scripts/settings.js"></script>
+</html>
