@@ -54,6 +54,20 @@ document.getElementById('trust').onchange = () => {
     trust = document.getElementById('trust').value;
     localStorage.setItem('trust', trust);
 }
+const apiEval = opt => {
+    switch(opt) {
+        case 'run': return '0';
+        case 'mattercloud': return '1';
+        case 'whatsonchain': return '2';
+        default: throw 'Invalid API.';
+    }
+}
+api = localStorage.api || "run";
+document.getElementById('api').options[apiEval(api)].selected = true;
+document.getElementById('api').onchange = () => {
+    api = document.getElementById('api').value;
+    localStorage.setItem('api', api);
+}
 document.getElementById('backup').addEventListener('click', showEntry)
 document.getElementById('restore').addEventListener('click', showRestore)
 restore.addEventListener('click', restoreSeed);

@@ -38,12 +38,20 @@
                         <button class="jigsBtn" type="button" id="sendbsv">RESTORE</button>
                     </div>
                 </div>
-                <div class="dropdown">
-                    <label for="trust">Trust Configuration:</label>
+                <div class="dropdown trust">
+                    <label for="trust">Trust:</label>
                     <select required id="trust">
                         <option value="0">Default</option>
                         <option value="1">None</option>
                         <option value="2">All</option>
+                    </select>
+                </div>
+                <div class="dropdown api">
+                    <label for="api">API:</label>
+                    <select required id="api">
+                        <option value="run">RUN</option>
+                        <option value="mattercloud">MatterCloud</option>
+                        <option value="whatsonchain">WhatsOnChain</option>
                     </select>
                 </div>
                 <div class="entryCon" id="entryCon">
@@ -54,9 +62,7 @@
     </body>
     <script src="./scripts/bsv.browser.min.js"></script>
     <script src="./scripts/config.js"></script>
-    <script src="./scripts/run.browser.min.js"></script>
     <script src="./scripts/bsv-mnemonic.min.js"></script>
     <script src="./scripts/helpers.js"></script>
-    <script src="./scripts/purse.js"></script>
     <script src="./scripts/settings.js"></script>
 </html>

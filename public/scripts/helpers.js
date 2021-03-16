@@ -143,6 +143,7 @@ const initRun = (trst, purse, owner, useCustomPurse = true, activate) => {
             run.cache = cache
             run.client = true;
         }
+        run.trust('cache');
         return run;
     }
     else { alert('Error initializing owner and purse keys.') }

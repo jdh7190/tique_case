@@ -1,5 +1,6 @@
 var unit = 'USD', wallet = 'purse', jigsCount = 0, balElem = document.getElementById('bsvBalance'), jigsbtn = document.getElementById('sendjigs');
 var inputAddr = document.getElementById('purseAddr'), ownerAddr = document.getElementById('ownerAddr'), jigs = [], contracts = [], constructors = [];
+Run.util.sha256 = async(h) => {return new Uint8Array(await crypto.subtle.digest('SHA-256', h))}
 const qrCode = (e, value) => {
     let qrAddr = document.getElementById(e);
     qrAddr.innerText = '';
@@ -100,6 +101,7 @@ const loadAll = async() => {
         for (let contract of contracts) { loadToken(contract) }
         localStorage.setItem('contracts', JSON.stringify(contracts));
     }
+    document.getElementById('loading').style.display = 'none';
 }
 const initWallet = () => {
     contracts = JSON.parse(localStorage.getItem('contracts') || '[]');
@@ -215,10 +217,13 @@ if (script) {
     }
 }
 else {
+    document.getElementById('loading').style.display = 'inline-block';
     if (localStorage.getItem('hasBackedUp') === 'false') {alert('Please backup your wallet!')}
     initRun();
     initWallet();
     balance();
+    const urlParams = new URLSearchParams(location.search);
+    if (urlParams.get('flip') && localStorage.ownerKey) { setTimeout(() => {flip()}, 600) }
 }
 const addToList = (contract, loc, balance, def) => {
     const exists = document.getElementById(`${loc}element`);
