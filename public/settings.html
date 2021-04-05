@@ -23,7 +23,7 @@
     <body>
         <div class="page center">
             <div class="settings">
-                <a href="javascript:history.back()"><img src="./images/back.svg" class="back" id="back"></a>
+                <a href="./index.html"><img src="./images/back.svg" class="back" id="back"></a>
                 <div class="seedCon">
                     <a href="./settings.html" class="title">Settings</a>
                 </div>
@@ -57,12 +57,22 @@
                 <div class="entryCon" id="entryCon">
                     <textarea rows="4" cols="50" id="entry" class="entry" autocomplete="off"></textarea>
                 </div>
+                <div class="box transferOwner" id="oTransfer">
+                    <img src="./images/rightarrow.svg" class="icon">
+                    <div class="seedText">Transfer Jigs to Owner</div>
+                </div>
+                <div class="box transferPurse" id="pTransfer">
+                    <img src="./images/leftarrow.svg" class="icon">
+                    <div class="seedText">Transfer Sats to Purse</div>
+                </div>
             </div>
         </div>
     </body>
     <script src="./scripts/bsv.browser.min.js"></script>
     <script src="./scripts/config.js"></script>
     <script src="./scripts/bsv-mnemonic.min.js"></script>
+    <script src="./scripts/run.browser.min.js"></script>
+    <script src="./scripts/purse.js"></script>
     <script src="./scripts/helpers.js"></script>
     <script src="./scripts/settings.js"></script>
 </html>

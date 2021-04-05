@@ -21,13 +21,15 @@ if (idb) {
 }
 class acornsPurse extends LocalPurse {
     async balance(utxos) {
+        blockchain = new Run.plugins.WhatsOnChain({ network });
         if (!utxos) { utxos = await this.blockchain.utxos(this.address) }
         const balance = (utxos).reduce(((t, e) => t + e.satoshis), 0)
         return {utxos, balance};
     }
-    async broadcastTx(utxos, address, amount) {
-        const tx = transaction.from(utxos).to(address, amount).change(this.address).sign(this.privkey);
+    async broadcastTx(utxos, address, amount, change, exportRawTx) {
+        const tx = transaction.from(utxos).to(address, amount).change(change ? change : this.address).sign(this.privkey);
         const rawtx = tx.toString();
+        if (exportRawTx) { return rawtx }
         let txid;
         console.log({rawtx})
         try { 
@@ -92,15 +94,16 @@ class acornsPurse extends LocalPurse {
             })
         }
         let tx = new bsv.Transaction(rawtx);
-        tx.outputs.forEach(output => { output.satoshis = 546 });
         let utxos = await cachedUtxos(tx._getOutputAmount());
         tx.from(utxos);
-        parents.forEach((parent, idx) => {
-            tx.inputs[idx].output = new bsv.Transaction.Output({
-                satoshis: parent.satoshis,
-                script: new bsv.Script(parent.script)
+        if (parents?.length) {
+            parents.forEach((parent, idx) => {
+                tx.inputs[idx].output = new bsv.Transaction.Output({
+                    satoshis: parent.satoshis,
+                    script: new bsv.Script(parent.script)
+                })
             })
-        })
+        }
         tx._getInputAmount();
         tx.change(this.address).sign(this.privkey);
         return tx.toString('hex');

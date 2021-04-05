@@ -51,18 +51,23 @@ const addToList = (contract, loc, balance, def) => {
     tokensDiv.appendChild(row);
 }
 const sendTokens = async() => {
-    let amt = document.getElementById('sendamt').value, pubkey = document.getElementById('sendaddr').value;
+    let amt = document.getElementById('sendamt').value, pubkey = document.getElementById('sendaddr').value, pmail = false;
     if (enforceAmt) { if (!amt) { alert('Please specify an Amount to Send.'); return } }
     const validAddr = bsv.Address.isValid(pubkey);
     if ((pubkey.includes('@') || (pubkey.includes('1') && !validAddr) && enableRelayXPaymail)) {
         let address = await getAddress(validateHandle(pubkey));
         pubkey = address?.length > 0 ? address : '';
+        pmail = true;
     }
     else {
         if (!validAddr) { alert('Please specify a valid Address or alias.'); return }
     }
     if (!pubkey) { alert('Please specify a valid Address or alias.'); return }
     let contract = await run.load(urlParams.get('loc'));
+    if (contract?.interactive !== false && pmail) {
+        alert('Cannot send Interactive Tokens/Jigs to paymail!');
+        return;
+    }
     if (contract?.deps?.Token) {
         try {
             const tx = new Run.Transaction();
@@ -83,6 +88,10 @@ const sendTokens = async() => {
         catch (e) { console.log(e); alert(e) }
     }
     else {
+        if (pmail) {
+            alert('Cannot send Jigs (NFTs) to paymails. Please enter BSV address.');
+            return;
+        }
         try {
             let jig = await run.load(urlParams.get('loc'));
             jig.send(pubkey);

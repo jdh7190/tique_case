@@ -7,7 +7,7 @@ const addUTXOs = (utxos, db) => {
         table.add(utxo);
     });
 }
-const clearUTXOs = (utxos) => {
+const clearUTXOs = utxos => {
     if (idb) {
         const request = indexedDB.open('purse', 1);
         request.onsuccess = e => {

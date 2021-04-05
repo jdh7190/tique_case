@@ -14,7 +14,7 @@ var apiKey = '';
 var idb = window.indexedDB || window.mozIndexedDB || window.webkitIndexedDB || window.msIndexedDB;
 var feeThreshold = 1.1;
 var run;
-var enableRelayXPaymail = false;
+var enableRelayXPaymail = true;
 const bsvtxExplorer = 'https://whatsonchain.com/tx/';
 const rundbhost = '';
 var trust = localStorage.trust || "0";

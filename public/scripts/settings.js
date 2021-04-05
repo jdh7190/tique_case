@@ -62,12 +62,64 @@ const apiEval = opt => {
         default: throw 'Invalid API.';
     }
 }
+transfer = async(from, to) => {
+    const tRun = initRun(true, localStorage.purseKey, localStorage.purseKey, false, true);
+    const ownerAddr = bsv.Address.fromPrivateKey(bsv.PrivateKey.fromWIF(localStorage.ownerKey))
+    if (!from && !to) { from = run.purse.address, to = ownerAddr.toString() }
+    try {
+        let utxos = await run.blockchain.utxos(from), cache = [], foundJig = false, rtx = new Run.Transaction();
+        for (let utxo of utxos) {
+            const rawtx = await run.blockchain.fetch(utxo.txid);
+            if (isJig(rawtx, utxo.vout)) {
+                let jig = await tRun.load(`${utxo.txid}_o${utxo.vout}`);
+                if (jig) {
+                    rtx.update(() => { if (typeof jig !== 'function') { foundJig = true; jig.send(to) } })
+                }
+            }
+            else { cache.push(utxo) }
+        }
+        if (foundJig) {
+            let s = confirm(`Do you want to transfer jigs from the purse to the owner?`);
+            if (s) {
+                let r = await rtx.export();
+                let tx = await run.blockchain.broadcast(r);
+                console.log({tx})
+                if (tx) {
+                    alert(`Jigs transferred! ${tx}`)
+                }
+            }
+        }
+        else { alert('No jigs to transfer.') }
+    } catch (e) { alert(e) }
+}
+transferSats = async(from, to) => {
+    const run = initRun(true, null, null, true, true);
+    if (!from && !to) { from = run.owner.address, to = run.purse.address }
+    let utxos = await run.blockchain.utxos(from), send = [];
+    for (let utxo of utxos) {
+        const rawtx = await run.blockchain.fetch(utxo.txid);
+        if (!isJig(rawtx, utxo.vout)) { send.push(utxo) }
+    }
+    if (send.length) {
+        const sats = send.reduce((a, curr) => { return a + curr.satoshis }, 0);
+        let s = confirm(`Do you want to transfer ${sats} satoshis from the owner to the purse?`);
+        if (s) {
+            let tx = new bsv.Transaction().from(send).to(to, sats - (100 * send.length)).sign(run.owner.privkey);
+            let txid = await run.blockchain.broadcast(tx.toString('hex'));
+            if (txid) { alert(`Satohis transferred! ${txid}`) }
+        }
+    }
+    else { alert('No satoshis to transfer.') }
+}
 api = localStorage.api || "run";
 document.getElementById('api').options[apiEval(api)].selected = true;
 document.getElementById('api').onchange = () => {
     api = document.getElementById('api').value;
     localStorage.setItem('api', api);
+    softRefresh();
 }
 document.getElementById('backup').addEventListener('click', showEntry)
 document.getElementById('restore').addEventListener('click', showRestore)
 restore.addEventListener('click', restoreSeed);
+document.getElementById('pTransfer').addEventListener('click', () => transferSats());
+document.getElementById('oTransfer').addEventListener('click', () => transfer())

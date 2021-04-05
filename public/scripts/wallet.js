@@ -15,9 +15,9 @@ const copyAddr = () => {
     copyText.select();
     copyText.setSelectionRange(0, 99999);
     document.execCommand("copy");
-    alert("Copied address: " + copyText.value);
+    alert(`${wallet === 'purse' ? 'Copied PURSE address! Only send BSV to this address!' : 'Copied OWNER address! Only send Tokens/Jigs to this address!'}`)
 }
-update = (u) => {
+update = u => {
     const storedBalance = parseInt(localStorage.getItem('purseSats') * 100000000);
     const added = u.reduce(((t, e) => t + e.satoshis), 0)
     sync(storedBalance + added);
@@ -97,7 +97,7 @@ const loadAll = async() => {
         }
     }
     if (again) { await loadAll(); again = false }
-    if (contracts) {
+    if (contracts && !again) {
         for (let contract of contracts) { loadToken(contract) }
         localStorage.setItem('contracts', JSON.stringify(contracts));
     }
@@ -142,19 +142,17 @@ networkSync = async(db) => {
 }
 const balance = async() => {
     let db;
-    if (idb) {
+    const bal = await run.purse.balance();
+    const res = await exchrate();
+    localStorage.setItem('rate', res.rate);
+    sync(bal.balance);
+    if (bal.utxos.length && idb) {
         const request = indexedDB.open('purse', 1);
         request.onsuccess = e => {
             db = e.target.result;
             if (db.objectStoreNames.contains('utxos')) {
                 console.log('success opening db.');
-                run.purse.getUTXOs(0, db, async(utxos) => {
-                    if (utxos.length) {
-                        const bal = await run.purse.balance(utxos);
-                        sync(bal.balance);
-                    }
-                    else { networkSync(db) }
-                })
+                clearUTXOs(bal.utxos);
             } else { console.log('utxos object store not found.') }
         }
         request.onerror = e => { console.log('error', e) }
@@ -199,8 +197,6 @@ flip = () => {
 }
 document.getElementById('flip').addEventListener('click', flip);
 document.getElementById('oflip').addEventListener('click', flip);
-//document.getElementById('oTransfer').addEventListener('click', () => transferSats());
-//document.getElementById('pTransfer').addEventListener('click', () => transfer())
 if (script) {
     script.onload = () => {
         const mnemonic = bsvMnemonic.fromRandom();
@@ -226,7 +222,8 @@ else {
     if (urlParams.get('flip') && localStorage.ownerKey) { setTimeout(() => {flip()}, 600) }
 }
 const addToList = (contract, loc, balance, def) => {
-    const exists = document.getElementById(`${loc}element`);
+    let exists = document.getElementById(`${loc}element`);
+    if (!exists) { exists = document.getElementById(`${contract.location}element`) }
     if (exists) { return }
     loc = balance > 0 ? loc : contract.location;
     jigsCount++;
@@ -270,50 +267,4 @@ const highlight = (el, ft) => {
         document.getElementById(`${radios[i].id}element`).style.background = '';
     }
     document.getElementById(`${el.id}element`).style.background = 'rgba(244, 197, 29, 0.5)';
-}
-transfer = async(from, to) => {
-    if (!from && !to) { from = run.purse.address, to = run.owner.address }
-    let utxos = await run.blockchain.utxos(from), cache = [], foundJig = false, rtx = new Run.Transaction();
-    let p = localStorage.getItem('purseKey');
-    const tRun = initRun(true, p, p, false, true);
-    for (let utxo of utxos) {
-        const rawtx = await run.blockchain.fetch(utxo.txid);
-        if (isJig(rawtx, utxo.vout)) {
-            foundJig = true;
-            let jig = await tRun.load(`${utxo.txid}_o${utxo.vout}`);
-            if (jig) { rtx.update(() => { jig.send(to) }) }
-        }
-        else { cache.push(utxo) }
-    }
-    if (foundJig) {
-        let s = confirm(`Do you want to transfer jigs from the purse to the owner?`);
-        if (s) {
-            let r = await rtx.export();
-            await run.blockchain.broadcast(r);
-            clearUTXOs();
-            setInterval(() => { location.reload() }, 3000);
-        }
-    }
-    else {
-        alert('No jigs to transfer.');
-        location.reload();
-    }
-}
-transferSats = async(from, to) => {
-    if (!from && !to) { from = run.owner.address, to = run.purse.address }
-    let utxos = await run.blockchain.utxos(from), send = [];
-    for (let utxo of utxos) {
-        const rawtx = await run.blockchain.fetch(utxo.txid);
-        if (!isJig(rawtx, utxo.vout)) { send.push(utxo) }
-    }
-    if (send.length) {
-        const sats = send.reduce((a, curr) => { return a + curr.satoshis }, 0);
-        let s = confirm(`Do you want to transfer ${sats} satoshis from the owner to the purse?`);
-        if (s) {
-            let tx = new bsv.Transaction().from(send).to(to, sats - (100 * send.length)).sign(run.owner.privkey);
-            let txid = await run.blockchain.broadcast(tx.toString('hex'));
-            if (txid) { alert(`Satohis transferred! ${txid}`) }
-        }
-    }
-    else { alert('No satoshis to transfer.') }
 }
