@@ -284,7 +284,7 @@ body {
     width: 26px;
 }
 .tokenBalance {
-    right: 11px;
+    right: -10px;
     position: absolute;
     font-family: 'Roboto', sans-serif;
     font-style: normal;
@@ -293,7 +293,23 @@ body {
     line-height: 16px;
     color: #000000;
     margin-top: 8px;
-    width: 85px;
+    width: 55px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+}
+.contractID {
+    right: 48px;
+    position: absolute;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+    font-size: 10px;
+    line-height: 12px;
+    color: #000000;
+    margin-top: 11px;
+    width: 55px;
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
@@ -343,6 +359,7 @@ li {
 .element {
     height: 30px;
     line-height: 40px;
+    width: 285px;
 }
 .skip-link {
     position: absolute;

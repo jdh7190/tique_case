@@ -34,7 +34,7 @@ const addToList = (contract, loc, balance, def) => {
     let nameSpan = document.createElement('span');
     nameSpan.id = 'contractName';
     nameSpan.className = 'contractName';
-    nameSpan = setName(nameSpan, contract, def, loc, network);
+    nameSpan = setName(nameSpan, contract, def, loc, network, def ? true : false);
     row.appendChild(nameSpan);
     if (balance) {
         document.getElementById('tokenamt').style.display = 'block';

@@ -223,19 +223,19 @@ else {
 }
 const addToList = (contract, loc, balance, def) => {
     let exists = document.getElementById(`${loc}element`);
-    if (!exists) { exists = document.getElementById(`${contract.location}element`) }
+    if (!exists) { exists = document.getElementById(`${contract.origin}element`) }
     if (exists) { return }
     loc = balance > 0 ? loc : contract.location;
     jigsCount++;
     let li = document.createElement('li');
     li.className = 'element';
-    li.id = `${loc}element`;
+    li.id = `${contract.origin}element`;
     let radio = document.createElement('input');
     radio.type = 'radio';
     radio.className = 'jig';
     radio.id = loc;
     radio.name = 'jigs';
-    radio.onchange = function() { highlight(this, balance) }
+    radio.onchange = function() { highlight(this, balance, contract.origin) }
     let label = document.createElement('label');
     label.htmlFor = loc;
     label.className = 'select';
@@ -246,8 +246,13 @@ const addToList = (contract, loc, balance, def) => {
     label.appendChild(emojiSpan);
     let nameSpan = document.createElement('span');
     nameSpan.className = 'contractName';
-    nameSpan = setName(nameSpan, contract, def, loc, network);
+    nameSpan = setName(nameSpan, contract, def, loc, network, def ? true : false);
     label.appendChild(nameSpan);
+    let contractSpan = document.createElement('span');
+    contractSpan.className = 'contractID';
+    contractSpan.innerHTML = `<a href="https://run.network/explorer/?query=${contract.origin}&network=${network}" target=_blank>
+    ${contract.origin.slice(0, 5)}..${contract.origin.slice(-5)}</a>`;
+    label.appendChild(contractSpan);
     if (balance) {
         let bal = document.createElement('span');
         bal.className = "tokenBalance";
@@ -260,11 +265,11 @@ const addToList = (contract, loc, balance, def) => {
     li.appendChild(label);
     document.getElementById('list').appendChild(li);
 }
-const highlight = (el, ft) => {
+const highlight = (el, ft, origin) => {
     jigsbtn.style.background = '#F4C51D';
     const radios = document.querySelectorAll(`input[name='jigs']`);
     for (let i = 0; i < radios.length; i++) {
-        document.getElementById(`${radios[i].id}element`).style.background = '';
+        document.getElementById(`${radios[i].parentElement.id}`).style.background = '';
     }
-    document.getElementById(`${el.id}element`).style.background = 'rgba(244, 197, 29, 0.5)';
+    document.getElementById(`${origin}element`).style.background = 'rgba(244, 197, 29, 0.5)';
 }

@@ -102,16 +102,22 @@ setImage = (emojiSpan, metadata, def) => {
     else { emojiSpan.innerHTML = twemoji.parse('🐉') }
     return emojiSpan;
 }
-setName = (nameSpan, contract, def, loc, network) => {
-    if (contract?.metadata) {
-        nameSpan.innerHTML = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${contract?.metadata?.name || contract.name}</a>`;
-        nameSpan.innerText = `${contract?.metadata?.name || contract.name}`;
+setName = (nameSpan, contract, def, loc, network, isNFT) => {
+    if (isNFT) {
+        const nftName = contract?.constructor?.metadata?.name || contract?.name || def?.name;
+        nameSpan.innerHTML = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${nftName}</a>`;
+        nameSpan.innerText = `${nftName}`;
+    } else {
+        if (contract?.metadata) {
+            nameSpan.innerHTML = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${contract?.metadata?.name || contract.name}</a>`;
+            nameSpan.innerText = `${contract?.metadata?.name || contract.name}`;
+        }
+        else if (def) {
+            nameSpan.innerHTML = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${def?.metadata?.name || def.name}</a>`;
+            nameSpan.innerText = `${def?.metadata?.name || def.name}`;
+        }
+        else { nameSpan.innerText = `${contract.name}` }
     }
-    else if (def) {
-        nameSpan.innerHTML = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${def?.metadata?.name || def.name}</a>`;
-        nameSpan.innerText = `${def?.metadata?.name || def.name}`;
-    }
-    else { nameSpan.innerText = `${contract.name}` }
     return nameSpan;
 }
 softRefresh = async() => {
@@ -192,3 +198,12 @@ getAddress = async(handle) => {
     catch (e) { alert(e); return '' }
 }
 const sleep = (timeout) => { return new Promise(resolve => setTimeout(resolve, timeout)) }
+getJigs = async(ownerAddress) => {
+    let jigs = [];
+    const utxos = await run.blockchain.utxos(ownerAddress);
+    for (let utxo of utxos) {
+        let jig = await run.load(`${utxo.txid}_o${utxo.vout}`);
+        jigs.push(jig);
+    }
+    return jigs;
+}
