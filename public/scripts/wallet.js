@@ -22,42 +22,6 @@ update = u => {
     const added = u.reduce(((t, e) => t + e.satoshis), 0)
     sync(storedBalance + added);
 }
-const listenTx = (address, jig) => {
-    let es;
-    if (network === 'main') { es = new EventSource(`https://stream.bitcoinfiles.org/mempool/filter/${outputScript(address)}`) }
-    else if (network === 'test') { es = new EventSource(`https://stream-testnet.bitcoinfiles.org/mempool/filter/${outputScript(address)}`) }
-    else { throw `Invalid network: ${network}`}
-    es.onmessage = async(event) => {
-        if (event) {
-            const tx = JSON.parse(event.data);
-            if (tx?.raw) {
-                let u = checkRawTx(tx.raw, address, tx.h);
-                if (jig) {
-                    for (let utxo of u) {
-                        let j = await run.load(`${utxo.txid}_o${utxo.vout}`);
-                        insertJig(j);
-                        document.getElementById('list').innerHTML = '';
-                        loadAll();
-                        //loadToken(j.constructor.location);
-                    }
-                }
-                else {
-                    if (u.length > 0 && idb) {
-                        const request = indexedDB.open('purse', 1);
-                        request.onsuccess = e => {
-                            let db = e.target.result;
-                            console.log('success');
-                            update(u)
-                            addUTXOs(u, db);
-                        }
-                        request.onerror = e => { console.log('error', e) }
-                    }
-                    else { update(u) }
-                }
-            }
-        }
-    };
-}
 const loadToken = async(loc) => {
     let balance = 0, contract = constructors.find(c => c.location === loc);
     if (contract?.deps?.Token) {
@@ -117,9 +81,7 @@ const initWallet = () => {
         location.href = `./send.html?loc=${loc}`;
     });
     qrCode('qrAddr', run.purse.address);
-    listenTx(run.purse.address);
     loadAll();
-    //listenTx(run.owner.address, true);
 }
 sendCache = loc => {
     const contract = constructors.find(c => c.location === loc);

@@ -70,7 +70,7 @@ This address is linked to your owner key at the ownerPath derivation above.
 
 Upon receipt of Jigs, they will display in the Jigs section. If an emoji is defined on the Jig's metadata (```metadata.emoji```), then it will display in the left-most column.
 
-If a [BitcoinFiles](https://www.bitcoinfiles.org/) transaction hash is associated, that will display with priority over the emoji instead.
+If a transaction hash that implements the [B](https://b.bitdb.network/) protocol is associated, that will display with priority over the emoji instead.
 
 The name of the Jig will display in the middle column. If a name is defined on the Jig's metadata (```metadata.name```) or (```.name```) then that value will display.
 
@@ -122,20 +122,7 @@ The USD exchange rates is fetched from the [WhatsOnChain API](https://developers
 
 To receive BSV in the wallet, send BSV to the purse address.
 
-When the wallet is open, it listens to the SSE endpoint provided by MatterPool.
-
-Documentation can be found [here](https://developers.matterpool.io/#socket-streaming-sse).
-
-A similar function is implemented to receive jigs, but must be called and modified to refresh the Jigs list.
-
-Specify the ```run.owner.address``` as the first parameter in ```listenTx()``` and ```true``` as the second parameter to listen for incoming Run transactions.
-
-Example:
-
-```javascript
-listenTx(run.owner.address, true);
-```
-This function is commented out by default.
+Once the BSV is sent, refresh the page to view the coins receieved.
 
 ## UTXO management
 

@@ -202,8 +202,10 @@ getJigs = async(ownerAddress) => {
     let jigs = [];
     const utxos = await run.blockchain.utxos(ownerAddress);
     for (let utxo of utxos) {
-        let jig = await run.load(`${utxo.txid}_o${utxo.vout}`);
-        jigs.push(jig);
+        try {
+            let jig = await run.load(`${utxo.txid}_o${utxo.vout}`);
+            jigs.push(jig);
+        } catch(e) { console.log(e) }
     }
     return jigs;
 }
