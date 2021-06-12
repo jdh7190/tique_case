@@ -22,6 +22,43 @@ update = u => {
     const added = u.reduce(((t, e) => t + e.satoshis), 0)
     sync(storedBalance + added);
 }
+const listenTx = (address, jig) => {
+    let centrifuge;
+    const filter = outputScript(address);
+    if (network === 'main') { centrifuge = new Centrifuge('wss://socket.whatsonchain.com/mempool') }
+    else { throw `${network} network not supported.`}
+    centrifuge.on('publish', async message => {
+        const hex = message.data.hex;
+        if (hex.includes(filter)) {
+            let u = checkRawTx(hex, address, message.data.hash);
+            if (jig) {
+                for (let utxo of u) {
+                    let j = await run.load(`${utxo.txid}_o${utxo.vout}`);
+                    insertJig(j);
+                    document.getElementById('list').innerHTML = '';
+                    loadAll();
+                    //loadToken(j.constructor.location);
+                }
+            }
+            else {
+                if (u.length > 0 && idb) {
+                    const request = indexedDB.open('purse', 1);
+                    request.onsuccess = e => {
+                        let db = e.target.result;
+                        console.log('success');
+                        update(u)
+                        addUTXOs(u, db);
+                    }
+                    request.onerror = e => { console.log('error', e) }
+                }
+                else { update(u) }
+            }
+        }
+    });
+    centrifuge.on('disconnect', ctx => { console.log('Disconnected: ' + ctx.reason) });
+    centrifuge.on('connect', ctx => { console.log('Connected with client ID ' + ctx.client + ' over ' + ctx.transport) });
+    centrifuge.connect();
+}
 const loadToken = async(loc) => {
     let balance = 0, contract = constructors.find(c => c.location === loc);
     if (contract?.deps?.Token) {
@@ -81,6 +118,7 @@ const initWallet = () => {
         location.href = `./send.html?loc=${loc}`;
     });
     qrCode('qrAddr', run.purse.address);
+    listenTx(run.purse.address);
     loadAll();
 }
 sendCache = loc => {

@@ -18,3 +18,4 @@ var enableRelayXPaymail = true;
 const bsvtxExplorer = 'https://whatsonchain.com/tx/';
 const rundbhost = '';
 var trust = localStorage.trust || "0";
+const RUN_0_6_FILTER = '006a0372756e0105';
