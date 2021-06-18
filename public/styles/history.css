@@ -1,0 +1,37 @@
+.entryText {
+    margin-left: 75px;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+}
+.historyCon {
+    text-align: center;
+    margin-top: 12px;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 24px;
+}
+li {
+    margin-bottom: 20px;
+}
+.emoji {
+    margin-left: 20px;
+}
+.jigsList {
+    position: absolute;
+    width: 100%;
+    left: -20px;
+    top: 6px;
+}
+.back {
+    position: absolute;
+    left: 20px;
+    top: 8px;
+}
+.time {
+    position: absolute;
+    left: 83%;
+    font-family: 'Roboto', sans-serif;
+    font-weight: bold;
+}
+.lds-ellipsis {
+    top: 0px;
+}

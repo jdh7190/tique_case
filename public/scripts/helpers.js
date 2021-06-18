@@ -198,14 +198,39 @@ getAddress = async(handle) => {
     catch (e) { alert(e); return '' }
 }
 const sleep = (timeout) => { return new Promise(resolve => setTimeout(resolve, timeout)) }
-getJigs = async(ownerAddress) => {
-    let jigs = [];
-    const utxos = await run.blockchain.utxos(ownerAddress);
-    for (let utxo of utxos) {
-        try {
-            let jig = await run.load(`${utxo.txid}_o${utxo.vout}`);
-            jigs.push(jig);
-        } catch(e) { console.log(e) }
+const timeago = ms => {
+    ms = Date.now() - ms;
+    let ago = Math.floor(ms / 1000);
+    let part = 0;
+    if (ago < 15) { return "now"; }
+    if (ago < 60) { return ago + "sec"; }
+    if (ago < 120) { return "1min"; }
+    if (ago < 3600) {
+        while (ago >= 60) { ago -= 60; part += 1; }
+        return part + "min";
     }
-    return jigs;
+    if (ago < 7200) { return "1hr"; }
+    if (ago < 86400) {
+        while (ago >= 3600) { ago -= 3600; part += 1; }
+        return part + "hr";
+    }
+    if (ago < 172800) { return "1d"; }
+    if (ago < 604800) {
+        part = parseInt(ago / 86400);
+        return part + "d";
+    }
+    if (ago < 1209600) { return "1wk"; }
+    if (ago < 2592000) {
+        while (ago >= 604800) { ago -= 604800; part += 1; }
+        return part + "wk";
+    }
+    if (ago < 5184000) { return "1mth"; }
+    if (ago < 31536000) {
+        while (ago >= 2592000) { ago -= 2592000; part += 1; }
+        return part + "mth";
+    }
+    if (ago < 1419120000) {
+        return "1y";
+    }
+    return "1y";
 }

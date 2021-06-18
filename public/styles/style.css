@@ -271,6 +271,15 @@ body {
     line-height: 16px;
     cursor: pointer;
 }
+.history {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    left: 20px;
+    top: 28px;
+    background: #D3D3D3;
+    cursor: pointer;
+}
 .jigsList {
     position: absolute;
     width: 100%;

@@ -1,8 +1,8 @@
-var CACHE_NAME = 'v0.02';
+var CACHE_NAME = 'v0.03';
 var urlsToCache = [
   './index.html'
 ];
-self.addEventListener('install', (event) => {
+self.addEventListener('install', event => {
   event.waitUntil(
     caches.open(CACHE_NAME)
       .then((cache) => {
@@ -13,7 +13,7 @@ self.addEventListener('install', (event) => {
       })
   )
 })
-self.addEventListener('activate', (event) => {
+self.addEventListener('activate', event => {
   console.log('Activated.')
   event.waitUntil(
     caches.keys().then(cacheNames => {
@@ -27,7 +27,7 @@ self.addEventListener('activate', (event) => {
     })
   )
 })
-self.addEventListener('fetch', (e) => {
+self.addEventListener('fetch', e => {
   e.respondWith(
     caches.match(e.request).then((response) => {
       return response || fetch(e.request);
