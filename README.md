@@ -4,7 +4,7 @@
 
 The Tique Case is an open-source Bitcoin SV web wallet to send and receive Jigs using the Run on Bitcoin protocol.
 
-Tique Case is a 100% client-side wallet that requires no back-end, relying only on external APIs such as Run Connect or MatterCloud to interact with the blockchain.
+Tique Case is a 100% client-side wallet that requires no back-end, relying only on external APIs such as RUN Connect or WhatsOnChain to interact with the blockchain.
 
 Private keys and the wallet's seed phrase are stored in the browser (localStorage) and never exposed externally.
 
@@ -15,7 +15,7 @@ The intention of this wallet is to provide an open-sourced wallet that allows ba
 To install, clone via:
 
 ```
-git clone https://github.com/jdh7190/obento.git
+git clone https://github.com/jdh7190/tique_case.git
 ```
 
 ## Getting Started
@@ -155,6 +155,8 @@ The following functions are implemented:
 
 ```broadcast()``` is overriden to let the purse know which UTXOs were consumed upon paying for a transaction that sends Jigs or Tokens and to delete them from ```IndexedDB```.
 
+```broadcastRawTx``` will send a raw transaction to the Bitcoin network, while caching UTXOs locally.
+
 ## Trusted contracts
 
 Run has a concept known as [Trust](https://run.network/docs/#api-reference-run-trust-txid) where a list of contract transactions can be specified that will be loaded.
@@ -206,6 +208,6 @@ The Transfer function has a use-case for receiving payments based on ownership o
 
 Feel free to fork this repo, open issues or make pull requests.
 
-Contact [@145](https://twetch.app/u/145) on Twetch and [@cryptoacorns](https://twitter.com/cryptoAcorns) on Twitter.
+Contact [@cryptoacorns](https://twitter.com/cryptoAcorns) on Twitter.
 
 The wallet code is open-source however the design (HTML and CSS) are copyrighted by DuckCreation.

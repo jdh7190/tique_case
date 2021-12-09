@@ -1,7 +1,13 @@
 .entryText {
+    margin-top: 3px;
     margin-left: 75px;
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
+    width: 165px;
+    display: inline-block;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 .historyCon {
     text-align: center;
@@ -27,10 +33,12 @@ li {
     top: 8px;
 }
 .time {
+    margin-top: 5px;
     position: absolute;
     left: 83%;
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
+    line-height: 19px;
 }
 .lds-ellipsis {
     top: 0px;

@@ -5,15 +5,15 @@
         <meta property="og:title" content="Tique Case"/>
         <meta property="og:type" content="website">
         <meta property="og:image:url" content="./images/pwa-512x512.png">
-        <meta property="og:description" content="Settings - Manage your Jigs and Tokens!">
+        <meta property="og:description" content="Settings - Your Keepsakes on Bitcoin">
         <meta name="theme-color" content="#D3D3D3">
-        <meta name="description" content="Settings - Manage your Jigs and Tokens!">
+        <meta name="description" content="Settings - Your Keepsakes on Bitcoin">
         <meta name="apple-mobile-web-app-title" content="Tique Case">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <link rel="manifest" href="./manifest.json">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link rel="apple-touch-icon" href="./images/apple-touch-icon-180x180.png">
-        <link rel="icon" href="./favicon.ico">
+        <link rel="icon" href="./images/favicon.ico">
         <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
         <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
         <link rel="stylesheet" type="text/css" href="./styles/settings.css">
@@ -54,6 +54,11 @@
                         <option value="whatsonchain">WhatsOnChain</option>
                     </select>
                 </div>
+                <div class="dropdown spendlimit">
+                    <label for="spendlimit">Satoshis spending limit:</label>
+                    <input type="number" step="10000" class="limitinput" placeholder="100000" min=0 id="satsLimit">
+                    <button type="button" class="limitbtn" id="limitSet">Set</button>
+                </div>
                 <div class="entryCon" id="entryCon">
                     <textarea rows="4" cols="50" id="entry" class="entry" autocomplete="off"></textarea>
                 </div>
@@ -72,7 +77,8 @@
     <script src="./scripts/config.js"></script>
     <script src="./scripts/bsv-mnemonic.min.js"></script>
     <script src="./scripts/run.browser.min.js"></script>
-    <script src="./scripts/purse.js"></script>
+    <script src="./scripts/idb.js"></script>
     <script src="./scripts/helpers.js"></script>
+    <script src="./scripts/purse.js"></script>
     <script src="./scripts/settings.js"></script>
 </html>

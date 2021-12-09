@@ -2,6 +2,7 @@ const urlParams = new URLSearchParams(location.search);
 var enforceAmt = true, tokens = [];
 initRun();
 run.trust(urlParams.get('loc').substr(0,64));
+trustContracts(run);
 const loadToken = async(loc) => {
     let balance = 0;
     let contract = await run.load(loc);
@@ -29,7 +30,7 @@ const addToList = (contract, loc, balance, def) => {
     let row = document.createElement('p');
     let emojiSpan = document.createElement('span');
     emojiSpan.className = "emoji";
-    emojiSpan = setImage(emojiSpan, contract?.metadata, def);
+    emojiSpan = setImage(emojiSpan, contract?.metadata, def, contract.origin);
     row.appendChild(emojiSpan);
     let nameSpan = document.createElement('span');
     nameSpan.id = 'contractName';
@@ -64,10 +65,12 @@ const sendTokens = async() => {
     }
     if (!pubkey) { alert('Please specify a valid Address or alias.'); return }
     let contract = await run.load(urlParams.get('loc'));
-    if (contract?.interactive !== false && pmail) {
+    //await contract.sync();
+    if (contract?.interactive === undefined) { contract = contract.constructor }
+    /* if (contract?.interactive !== false && pmail) {
         alert('Cannot send Interactive Tokens/Jigs to paymail!');
         return;
-    }
+    } */
     if (contract?.deps?.Token) {
         try {
             const tx = new Run.Transaction();
@@ -85,10 +88,14 @@ const sendTokens = async() => {
             }
             else { throw 'Amount is incorrect.' }
         }
-        catch (e) { console.log(e); alert(e) }
+        catch (e) {
+            if (e.length === 0) {
+                alert('Please confirm you have enough funds in the purse to pay for the transaction.')
+            } else { alert(e) }
+        }
     }
     else {
-        if (pmail) {
+        if (pmail && !contract.deps.RelayNFT) {
             alert('Cannot send Jigs (NFTs) to paymails. Please enter BSV address.');
             return;
         }
@@ -102,7 +109,11 @@ const sendTokens = async() => {
                 document.getElementById('confirmation').href = `https://run.network/explorer/?query=${jig.location.substr(0,64)}&network=${network}`;
             }
         }
-        catch (e) { alert(e) }
+        catch (e) {
+            if (e.length === 0) {
+                alert('Please confirm you have enough funds in the purse to pay for the transaction.')
+            } else { alert(e) }
+        }
     }
 }
 loadToken(urlParams.get('loc'));

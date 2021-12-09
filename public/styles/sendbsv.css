@@ -42,8 +42,9 @@
     font-size: 12px;
 }
 .curBal {
-    top: 83px;
-    left: 44px;
+    top: 75px;
+    left: 42px;
+    font-size: 14px;
 }
 .jigsList {
     position: absolute;
@@ -74,15 +75,16 @@
     width: 26px;
 }
 .tokenBalance {
-    right: 11px;
+    right: 0px;
     position: absolute;
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 16px;
     color: #000000;
     margin-top: 8px;
+    height: 20px;
 }
 .contractName {
     left: 80px;
@@ -92,7 +94,7 @@
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 16px;
     color: #000000;
 }

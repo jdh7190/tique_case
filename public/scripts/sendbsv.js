@@ -1,4 +1,3 @@
-var db;
 const addToList = () => {
     let row = document.createElement('p');
     let emojiSpan = document.createElement('span');
@@ -19,11 +18,6 @@ const addToList = () => {
 }
 addToList();
 initRun();
-if (idb) {
-    const request = indexedDB.open('purse', 1);
-    request.onsuccess = e => { db = e.target.result }
-    request.onerror = e => { console.log('error') }
-}
 const sendBSV = async() => {
     amt = parseInt(parseFloat(document.getElementById('sendamt').value) * 100000000);
     pubkey = document.getElementById('sendaddr').value;
@@ -31,27 +25,16 @@ const sendBSV = async() => {
     const validAddr = bsv.Address.isValid(pubkey);
     if (!pubkey || (!pubkey.includes('@') && !pubkey.includes('$') && !validAddr)) { alert('Please specify a Paymail or Address.'); return }
     try {
-        run.purse.getUTXOs(amt, idb ? db : null, async(utxos) => {
-            const sent = await run.purse.send(utxos, pubkey, amt);
-            if (sent) {
-                document.getElementById('jigscon').style.display = 'none';
-                document.getElementById('confirm').style.display = 'block';
-                document.getElementById('confirmation').href = `${bsvtxExplorer}${sent.txid}`;
-                let u = checkRawTx(sent.rawtx, run.purse.address, sent.txid);
-                if (db) {
-                    const request = indexedDB.open('purse', 1);
-                    request.onsuccess = e => {
-                        let db = e.target.result;
-                        console.log('success');
-                        const tx = db.transaction('utxos', 'readwrite');
-                        const table = tx.objectStore('utxos');
-                        sent.utxos.forEach(utxo => { table.delete(utxo.output) })
-                        if (u.length > 0) { addUTXOs(u, db) }
-                    }
-                    request.onerror = e => { console.log('error', e) }
-                }
-            }
-        })
+        const utxos = await run.purse.getUTXOs(amt);
+        const sent = await run.purse.send(utxos, pubkey, amt);
+        if (sent) {
+            document.getElementById('jigscon').style.display = 'none';
+            document.getElementById('confirm').style.display = 'block';
+            document.getElementById('confirmation').href = `${bsvtxExplorer}${sent.txid}`;
+            let u = extractUTXOs(sent.rawtx, run.purse.address);
+            sent.utxos.forEach(utxo => { deleteUTXO(`${utxo.txid}_${utxo.vout}`) })
+            u.forEach(utxo => addUTXO(utxo))
+        }
     }
     catch (e) { alert(e) }
 }

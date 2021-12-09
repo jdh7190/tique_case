@@ -146,7 +146,7 @@ body {
     font-family: 'Courier Prime', monospace;
     font-style: normal;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 16px;
     color: #FFFFFF;
 }
@@ -189,14 +189,14 @@ body {
     font-family: 'Roboto Slab', serif;
     font-style: normal;
     font-weight: normal;
-    font-size: 36px;
+    font-size: 24px;
     line-height: 47px;
     color: #FFFFFF;
     position: absolute;
     cursor: pointer;
 }
 .bsvBalance {
-    font-size: 18px;
+    font-size: 16px;
     line-height: 24px;
 }
 .purseAddr {
@@ -232,7 +232,7 @@ body {
 }
 .titleCon {
     top: 25px;
-    left: 129px;
+    left: 117px;
     position: absolute;
 }
 .jigsBtn {
@@ -275,7 +275,7 @@ body {
     position: absolute;
     width: 48px;
     height: 48px;
-    left: 20px;
+    left: 10px;
     top: 28px;
     background: #D3D3D3;
     cursor: pointer;
@@ -283,7 +283,7 @@ body {
 .jigsList {
     position: absolute;
     width: 100%;
-    left: -20px;
+    left: -30px;
     top: 56px;
 }
 .emoji {
@@ -298,11 +298,11 @@ body {
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: bold;
-    font-size: 14px;
+    font-size: 16px;
     line-height: 16px;
     color: #000000;
     margin-top: 8px;
-    width: 55px;
+    width: 65px;
     display: inline-block;
     white-space: nowrap;
     overflow: hidden;
@@ -310,11 +310,11 @@ body {
     text-align: right;
 }
 .contractID {
-    right: 48px;
+    right: 58px;
     position: absolute;
     font-family: 'Roboto', sans-serif;
     font-weight: bold;
-    font-size: 10px;
+    font-size: 12px;
     line-height: 12px;
     color: #000000;
     margin-top: 11px;
@@ -326,15 +326,15 @@ body {
     text-align: right;
 }
 .contractName {
-    left: 30px;
+    left: 20px;
     bottom: 1px;
     position: relative;
     width: 100px;
     font-family: 'Roboto', sans-serif;
     font-style: normal;
     font-weight: bold;
-    font-size: 14px;
-    line-height: 16px;
+    font-size: 16px;
+    line-height: 19px;
     color: #000000;
     display: inline-block;
     white-space: nowrap;

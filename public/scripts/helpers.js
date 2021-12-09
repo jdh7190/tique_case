@@ -1,57 +1,4 @@
-const addUTXOs = (utxos, db) => {
-    console.log('adding UTXOs to cache...');
-    const tx = db.transaction('utxos', 'readwrite');
-    const table = tx.objectStore('utxos');
-    utxos.forEach(utxo => {
-        utxo.output = `${utxo.txid}_${utxo.vout}`;
-        table.add(utxo);
-    });
-}
-const clearUTXOs = utxos => {
-    if (idb) {
-        const request = indexedDB.open('purse', 1);
-        request.onsuccess = e => {
-            let db = e.target.result;
-            console.log('success');
-            const tx = db.transaction('utxos', 'readwrite');
-            const store = tx.objectStore('utxos');
-            const reqDelete = store.clear();
-            reqDelete.onsuccess = e => {
-                console.log("UTXO cache cleared.", e);
-                if (utxos && utxos?.length !== 0) { addUTXOs(utxos, db) }
-            }
-        }
-        request.onerror = e => { console.log('error', e) }
-    }
-}
-const clearRunCache = () => {
-    if (idb) {
-        const request = indexedDB.open('run-browser-cache', 1);
-        request.onsuccess = e => {
-            let db = e.target.result;
-            console.log('success');
-            const tx = db.transaction('run-objects', 'readwrite');
-            const store = tx.objectStore('run-objects');
-            const reqDelete = store.clear();
-            reqDelete.onsuccess = e => {
-                console.log("Run Browser Cache cleared.", e);
-            }
-        }
-        request.onerror = e => { console.log('error') }
-    }
-}
-const outputScript = (addr) => {
-    const address = bsv.Address.fromString(addr);
-    const script = bsv.Script(address)
-    const outScr = script.toASM().split(' ')[2];
-    return outScr;
-}
-const exchrate = async() => {
-    const res = await fetch(`https://api.whatsonchain.com/v1/bsv/main/exchangerate`);
-    const jres = await res.json();
-    return jres;
-}
-const checkRawTx = (rawtx, addr, txid) => {
+const extractUTXOs = (rawtx, addr) => {
     try {
         const tx = new bsv.Transaction(rawtx);
         let utxos = [], vout = 0;
@@ -62,7 +9,7 @@ const checkRawTx = (rawtx, addr, txid) => {
             let pkh = bsv.Address.fromPublicKeyHash(script.getPublicKeyHash());
             let address = pkh.toString();
             if (address === addr) {
-                utxos.push({satoshis, txid, vout, script: script.toHex()});
+                utxos.push({satoshis, txid: tx.hash, vout, script: script.toHex()});
             }
             vout++;
         });
@@ -73,7 +20,7 @@ const checkRawTx = (rawtx, addr, txid) => {
         return [];
     }
 }
-const spent = (tx) => {
+const spent = tx => {
     let utxos = [];
     tx.inputs.forEach(input => {
         let vout = input.outputIndex;
@@ -82,24 +29,33 @@ const spent = (tx) => {
     });
     return utxos;
 }
-setImage = (emojiSpan, metadata, def) => {
-    if (metadata) {
-        if (metadata.image) {
-            emojiSpan.innerHTML = `<img class="emoji" src="data:${metadata.image.mediaType};base64, ${metadata.image.base64Data}" alt="bfile">`;
+setImage = (emojiSpan, metadata, def, origin) => {
+    if (def?.origin === '1ba1080086ca6624851e1fbff18d903047f2b75d3a9ffe5cc8bf49ed0fdb36a0_o2' && origin) { // Gopniks contract
+        emojiSpan.innerHTML = `<img class="emoji" src="https://mornin.run/${origin}/img.png" alt="bfile">`;
+    } else {
+        if (metadata && !def) {
+            if (metadata.image) {
+                emojiSpan.innerHTML = `<img class="emoji" src="data:${metadata.image.mediaType};base64, ${metadata.image.base64Data}" alt="bfile">`;
+            }
+            else {
+                emojiSpan.innerHTML = twemoji.parse(metadata.emoji);
+            }
         }
-        else {
-            emojiSpan.innerHTML = twemoji.parse(metadata.emoji);
+        else if (def?.metadata) {
+            if (def.metadata.image === '_o1') {
+                emojiSpan.innerHTML = `<img class="emoji" src="https://mornin.run/${def.origin}/img.png" alt="bfile">`;
+                
+            } else {
+                if (def.metadata.image) {
+                    emojiSpan.innerHTML = `<img class="emoji" src="data:${def.metadata.image.mediaType};base64, ${def.metadata.image.base64Data}" alt="bfile">`;
+                }
+                else {
+                    emojiSpan.innerHTML = twemoji.parse(def.metadata.emoji);
+                }
+            }
         }
+        else { emojiSpan.innerHTML = twemoji.parse('🐉') }
     }
-    else if (def?.metadata) {
-        if (def.metadata.image) {
-            emojiSpan.innerHTML = `<img class="emoji" src="data:${def.metadata.image.mediaType};base64, ${def.metadata.image.base64Data}" alt="bfile">`;
-        }
-        else {
-            emojiSpan.innerHTML = twemoji.parse(def.metadata.emoji);
-        }
-    }
-    else { emojiSpan.innerHTML = twemoji.parse('🐉') }
     return emojiSpan;
 }
 setName = (nameSpan, contract, def, loc, network, isNFT) => {
@@ -124,11 +80,13 @@ softRefresh = async() => {
     let r = await exchrate();
     localStorage.setItem('rate', r.rate);
     clearUTXOs();
+    clearHistory();
     clearRunCache();
 }
 hardRefresh = () => {
     localStorage.clear();
     clearUTXOs();
+    clearHistory();
     clearRunCache();
     trust = "0";
     localStorage.setItem('trust', "0");
@@ -136,7 +94,7 @@ hardRefresh = () => {
 const initRun = (trst, purse, owner, useCustomPurse = true, activate) => {
     if (!owner) owner = localStorage.getItem('ownerKey');
     if (!purse) purse = localStorage.getItem('purseKey');
-    const cache = rundbhost !== '' ? new Run.plugins.RunDB(rundbhost) : null;
+    const state = rundbhost !== '' ? new Run.plugins.RunDB(rundbhost) : null;
     if (purse && owner) {
         if (useCustomPurse) {
             const acorns = new acornsPurse({ privkey: purse, blockchain, splits, feePerKb });
@@ -145,11 +103,10 @@ const initRun = (trst, purse, owner, useCustomPurse = true, activate) => {
         else { run = new Run({ network, owner, purse, api, app, timeout }) }
         if (trust === "2" || trst) { run.trust('*') }
         if (activate) { run.activate() }
-        if (cache) {
-            run.cache = cache
+        if (state) {
+            run.state = state
             run.client = true;
         }
-        run.trust('cache');
         return run;
     }
     else { alert('Error initializing owner and purse keys.') }
@@ -189,7 +146,7 @@ validateHandle = text => {
     }
     return handle;
 }
-getAddress = async(handle) => {
+getAddress = async handle => {
     try {
         let res = await fetch(`https://api.relayx.io/v1/paymail/run/${handle.toLowerCase()}`);
         let jres = await res.json();
@@ -197,7 +154,7 @@ getAddress = async(handle) => {
     }
     catch (e) { alert(e); return '' }
 }
-const sleep = (timeout) => { return new Promise(resolve => setTimeout(resolve, timeout)) }
+const sleep = timeout => { return new Promise(resolve => setTimeout(resolve, timeout)) }
 const timeago = ms => {
     ms = Date.now() - ms;
     let ago = Math.floor(ms / 1000);
@@ -233,4 +190,40 @@ const timeago = ms => {
         return "1y";
     }
     return "1y";
+}
+trustContracts = run => {
+    const contracts = JSON.parse(localStorage.getItem('contracts') || '[]');
+    console.log({contracts})
+    if (contracts.length) {
+        contracts.forEach(contract => {
+            if (!banned.includes(contract)) {
+                run.trust(contract.substr(0, 64))
+            }
+        })
+    }
+}
+getJigs = async(ownerAddress) => {
+    let jigs = [];
+    const utxos = await run.blockchain.utxos(ownerAddress);
+    for (let utxo of utxos) {
+        try {
+            let jig = await run.load(`${utxo.txid}_o${utxo.vout}`);
+            jigs.push(jig);
+        } catch(e) { console.log(e) }
+    }
+    return jigs;
+}
+getPaymailAddress = async paymail => {
+    const { address } = await (await fetch(`https://api.polynym.io/getAddress/${paymail}`)).json();
+    return address;
+}
+const destroyJig = async location => {
+    const jig = await run.load(location);
+    await jig.sync();
+    const tx = new Run.Transaction();
+    tx.update(() => {
+        jig.destroy();
+    })
+    const rawtx = await tx.export();
+    console.log(rawtx)
 }

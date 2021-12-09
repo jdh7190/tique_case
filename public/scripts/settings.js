@@ -16,8 +16,8 @@ const showRestore = () => {
     entryCon.style.display = 'block';
     restore.style.display = 'block';
 }
-const restoreSeed = () => {
-    const seed = entry.value;
+const restoreSeed = seedPhrase => {
+    const seed = seedPhrase !== null ? seedPhrase : entry.value;
     let valid, mnemonic;
     try {
         if (!seed) {
@@ -39,9 +39,12 @@ const restoreSeed = () => {
         localStorage.setItem('seed', mnemonic.toString());
         localStorage.setItem('purseKey', purse);
         localStorage.setItem('ownerKey', owner);
+        localStorage.setItem('logins', '[]');
         alert('Seed restored successfully!');
         clearUTXOs();
+        clearHistory();
         clearRunCache();
+        initTiqueCaseDB();
     }
     else {
         alert('Failed to restore seed.');
@@ -118,8 +121,14 @@ document.getElementById('api').onchange = () => {
     localStorage.setItem('api', api);
     softRefresh();
 }
+document.getElementById('satsLimit').value = spendLimit;
+document.getElementById('limitSet').addEventListener('click', () => {
+    const spendLimit = document.getElementById('satsLimit').value;
+    localStorage.setItem('spendLimit', spendLimit);
+    alert(`Spending limit updated to ${parseInt(spendLimit)} satoshis!`);
+});
 document.getElementById('backup').addEventListener('click', showEntry)
 document.getElementById('restore').addEventListener('click', showRestore)
-restore.addEventListener('click', restoreSeed);
+restore.addEventListener('click', () => restoreSeed(null));
 document.getElementById('pTransfer').addEventListener('click', () => transferSats());
 document.getElementById('oTransfer').addEventListener('click', () => transfer())

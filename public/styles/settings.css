@@ -16,6 +16,12 @@
     position: absolute;
     cursor: pointer;
 }
+.profile {
+    top: 12px;
+    right: 20px;
+    position: absolute;
+    /* cursor: pointer; */
+}
 .seedCon {
     text-align: center;
     margin-top: 6px;
@@ -74,7 +80,7 @@
     position: absolute;
     width: 280px;
     left: 42px;
-    top: 248px;
+    top: 278px;
     font-family: Courier;
     font-style: normal;
     font-weight: normal;
@@ -96,7 +102,7 @@
     position: relative;
     width: 67px;
     height: 64px;
-    top: 315px;
+    top: 330px;
     left: -50px;
     background: #F4C51D;
     border: 1px solid #000000;
@@ -117,6 +123,29 @@
 .api {
     top: 215px;
     left: 100px;
+}
+.spendlimit {
+    top: 245px;
+    left: 30px;
+    font-size: 13px;
+}
+.ownerPath {
+    top: 615px;
+    left: 30px;
+    font-size: 13px;
+}
+.limitinput {
+    width: 100px;
+}
+.limitbtn {
+    left: 40%;
+}
+.path {
+    width: 130px;
+    margin-top: 5px;
+}
+.pathBtn {
+    top: 655px;
 }
 .transferOwner {
     left: 41px;

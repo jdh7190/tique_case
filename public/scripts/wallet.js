@@ -1,6 +1,6 @@
 var unit = 'USD', wallet = 'purse', jigsCount = 0, balElem = document.getElementById('bsvBalance'), jigsbtn = document.getElementById('sendjigs');
 var inputAddr = document.getElementById('purseAddr'), ownerAddr = document.getElementById('ownerAddr'), jigs = [], contracts = [], constructors = [];
-Run.util.sha256 = async(h) => {return new Uint8Array(await crypto.subtle.digest('SHA-256', h))}
+Run.util.sha256 = async h => {return new Uint8Array(await crypto.subtle.digest('SHA-256', h))}
 const qrCode = (e, value) => {
     let qrAddr = document.getElementById(e);
     qrAddr.innerText = '';
@@ -30,7 +30,7 @@ const listenTx = (address, jig) => {
     centrifuge.on('publish', async message => {
         const hex = message.data.hex;
         if (hex.includes(filter)) {
-            let u = checkRawTx(hex, address, message.data.hash);
+            let u = extractUTXOs(hex, address);
             if (jig) {
                 for (let utxo of u) {
                     let j = await run.load(`${utxo.txid}_o${utxo.vout}`);
@@ -41,17 +41,8 @@ const listenTx = (address, jig) => {
                 }
             }
             else {
-                if (u.length > 0 && idb) {
-                    const request = indexedDB.open('purse', 1);
-                    request.onsuccess = e => {
-                        let db = e.target.result;
-                        console.log('success');
-                        update(u)
-                        addUTXOs(u, db);
-                    }
-                    request.onerror = e => { console.log('error', e) }
-                }
-                else { update(u) }
+                u.forEach(utxo => addUTXO(utxo))
+                update(u);
             }
         }
     });
@@ -59,8 +50,8 @@ const listenTx = (address, jig) => {
     centrifuge.on('connect', ctx => { console.log('Connected with client ID ' + ctx.client + ' over ' + ctx.transport) });
     centrifuge.connect();
 }
-const loadToken = async(loc) => {
-    let balance = 0, contract = constructors.find(c => c.location === loc);
+const loadToken = async loc => {
+    let balance = 0, contract = constructors.find(c => c.origin === loc);
     if (contract?.deps?.Token) {
         const tokens = jigs.filter(jig => jig instanceof contract);
         if (tokens.length) {
@@ -77,9 +68,9 @@ insertJig = jig => {
     if (typeof jig === 'object') {
         const jigIdx = jigs.findIndex(i => i.location === jig.location);
         if (jigIdx < 0) { jigs.push(jig) }
-        const conIdx = constructors.findIndex(i => i.location === jig.constructor.location);
+        const conIdx = constructors.findIndex(i => i.location === jig.constructor.origin);
         if (conIdx < 0) { constructors.push(jig.constructor) }
-        if (!contracts.includes(jig.constructor.location)) { contracts.push(jig.constructor.location) }
+        if (!contracts.includes(jig.constructor.origin)) { contracts.push(jig.constructor.origin) }
     }
 }
 const loadAll = async() => {
@@ -91,22 +82,28 @@ const loadAll = async() => {
             insertJig(jig);
         }
         catch (e) {
-            if (e.txid && trust === "0") {
-                run.trust(e.txid);
-                again = true;
+            console.log(e);
+            const txToTrust = e.toString().substr(166, 64) || e.txid;
+            if (txToTrust.length === 64 && trust === "0") {
+                if (!banned.includes(txToTrust)) {
+                    run.trust(txToTrust);
+                    again = true;
+                }
             }
         }
     }
-    if (again) { await loadAll(); again = false }
+    if (again) {
+        await loadAll();
+        again = false;
+    }
     if (contracts && !again) {
-        for (let contract of contracts) { loadToken(contract) }
+        for (let contract of contracts) { await loadToken(contract) }
         localStorage.setItem('contracts', JSON.stringify(contracts));
     }
     document.getElementById('loading').style.display = 'none';
 }
 const initWallet = () => {
-    contracts = JSON.parse(localStorage.getItem('contracts') || '[]');
-    if (contracts.length) { contracts.forEach(contract => { run.trust(contract.substr(0, 64)) }) }
+    trustContracts(run);
     inputAddr.value = run.purse.address;
     document.getElementById('sendbsv').addEventListener('click', () => { location.href = './sendbsv.html' })
     document.getElementById('copyAddr').addEventListener('click', copyAddr);
@@ -122,7 +119,7 @@ const initWallet = () => {
     loadAll();
 }
 sendCache = loc => {
-    const contract = constructors.find(c => c.location === loc);
+    const contract = constructors.find(c => c.origin === loc);
     if (contract?.deps?.Token) {
         const sending = jigs.filter(jig => jig instanceof contract);
         let send = [];
@@ -130,12 +127,9 @@ sendCache = loc => {
         localStorage.setItem('sending', JSON.stringify(send));
     }
 }
-networkSync = async(db) => {
+networkSync = async() => {
     const bal = await run.purse.balance();
-    if (db) {
-        const newUTXOs = bal.utxos;
-        addUTXOs(newUTXOs, db);
-    }
+    bal.utxos.forEach(u => addUTXO(u));
     const res = await exchrate();
     localStorage.setItem('rate', res.rate);
     sync(bal.balance);
@@ -146,16 +140,8 @@ const balance = async() => {
     const res = await exchrate();
     localStorage.setItem('rate', res.rate);
     sync(bal.balance);
-    if (bal.utxos.length && idb) {
-        const request = indexedDB.open('purse', 1);
-        request.onsuccess = e => {
-            db = e.target.result;
-            if (db.objectStoreNames.contains('utxos')) {
-                console.log('success opening db.');
-                clearUTXOs(bal.utxos);
-            } else { console.log('utxos object store not found.') }
-        }
-        request.onerror = e => { console.log('error', e) }
+    if (bal.utxos.length) {
+        clearUTXOs(bal.utxos);
     }
     else { networkSync() }
 }
@@ -222,27 +208,27 @@ else {
     if (urlParams.get('flip') && localStorage.ownerKey) { setTimeout(() => {flip()}, 600) }
 }
 const addToList = (contract, loc, balance, def) => {
-    let exists = document.getElementById(`${loc}element`);
-    if (!exists) { exists = document.getElementById(`${contract.origin}element`) }
+    const contractId = def ? def.origin : contract.origin;
+    const exists = document.getElementById(`${contractId}_${loc}element`);
     if (exists) { return }
     loc = balance > 0 ? loc : contract.location;
     jigsCount++;
     let li = document.createElement('li');
     li.className = 'element';
-    li.id = `${contract.origin}element`;
+    li.id = `${contractId}_${loc}element`;
     let radio = document.createElement('input');
     radio.type = 'radio';
     radio.className = 'jig';
     radio.id = loc;
     radio.name = 'jigs';
-    radio.onchange = function() { highlight(this, balance, contract.origin) }
+    radio.onchange = function() { highlight(this, balance, contractId, loc) }
     let label = document.createElement('label');
     label.htmlFor = loc;
     label.className = 'select';
     li.appendChild(radio);
     let emojiSpan = document.createElement('span');
     emojiSpan.className = "emoji";
-    emojiSpan = setImage(emojiSpan, contract?.metadata, def);
+    emojiSpan = setImage(emojiSpan, contract?.metadata, def, contract.origin);
     label.appendChild(emojiSpan);
     let nameSpan = document.createElement('span');
     nameSpan.className = 'contractName';
@@ -250,8 +236,8 @@ const addToList = (contract, loc, balance, def) => {
     label.appendChild(nameSpan);
     let contractSpan = document.createElement('span');
     contractSpan.className = 'contractID';
-    contractSpan.innerHTML = `<a href="https://run.network/explorer/?query=${contract.origin}&network=${network}" target=_blank>
-    ${contract.origin.slice(0, 5)}..${contract.origin.slice(-5)}</a>`;
+    contractSpan.innerHTML = `<a href="https://run.network/explorer/?query=${contractId}&network=${network}" target=_blank>
+    ${contractId.slice(0, 5)}..${contractId.slice(-5)}</a>`;
     label.appendChild(contractSpan);
     if (balance) {
         let bal = document.createElement('span');
@@ -265,11 +251,16 @@ const addToList = (contract, loc, balance, def) => {
     li.appendChild(label);
     document.getElementById('list').appendChild(li);
 }
-const highlight = (el, ft, origin) => {
+const highlight = (el, ft, origin, location) => {
     jigsbtn.style.background = '#F4C51D';
     const radios = document.querySelectorAll(`input[name='jigs']`);
     for (let i = 0; i < radios.length; i++) {
         document.getElementById(`${radios[i].parentElement.id}`).style.background = '';
     }
-    document.getElementById(`${origin}element`).style.background = 'rgba(244, 197, 29, 0.5)';
+    if (location) {
+        document.getElementById(`${origin}_${location}element`).style.background = 'rgba(244, 197, 29, 0.5)';
+    } else {
+        document.getElementById(`${origin}element`).style.background = 'rgba(244, 197, 29, 0.5)';
+    }
+
 }
