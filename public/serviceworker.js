@@ -1,12 +1,10 @@
-var CACHE_NAME = 'v0.03';
+var CACHE_NAME = 'v0.01';
 var urlsToCache = [
   './index.html',
   './manifest.json',
   './send.html',
   './sendbsv.html',
   './settings.html',
-  './styles/ex.css',
-  './styles/tique.css',
   './styles/send.css',
   './styles/sendbsv.css',
   './styles/settings.css',

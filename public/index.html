@@ -18,7 +18,6 @@
         <meta name="apple-mobile-web-app-title" content="Tique Case">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <link rel="manifest" href="./manifest.json">
-        <link rel="stylesheet" href = './styles/tique.css'>
         <link rel="preconnect" href="https://fonts.googleapis.com">
         <script src="./scripts/fontawesome.js"></script>
         <link rel="apple-touch-icon" href="./images/apple-touch-icon.png">
@@ -185,125 +184,7 @@
             </div>
         </div>
         <script>
-            //SideNavigation Control
-            var sidenav = document.getElementById('sidenav').parentElement;
-            var dModal = document.getElementById('dModal');
-            var qModal = document.getElementById('qModal');
             var script;
-            onclick = event => {
-                if (event.target == sidenav) {
-                    sidenav.style.display = "none";
-                }
-                if (event.target == dModal) {
-                    dModal.style.display = "none";
-                }
-                if (event.target == qModal) {
-                    qModal.style.display = "none";
-                }
-            }
-            function openSideNav() {
-                sidenav.style.display = 'block';
-            }
-            function closeSideNav() {
-                sidenav.style.display = 'none';
-            }
-            function closeQModal() {
-                qModal.style.display = 'none';
-            }
-            function closeDModal() {
-                dModal.style.display = 'none';
-            }
-
-            //Show tooltip on Click
-            function showtooltip(div){
-                const clipboard = navigator.clipboard;
-                const copyText = div.id === 'ocopyAddr' || div.id === 'tcopyAddr' ? document.getElementById('ownerAddr') : document.getElementById('purseAddr');
-                clipboard.writeText(copyText.innerText);
-                var t = div.querySelector('.tooltip');
-                t.className = t.className + ' show';
-                setTimeout(() => { t.className = t.className.replace("show", "") }, 1000);
-            }
-
-            //BottomNavigation Control
-            function btnactive(activediv,index){
-                activediv.className = activediv.className + ' active';
-                var divs = document.getElementById('bottomnav').children;
-                var bar = document.getElementById('indicator_bar');
-                bar.style.left = 25*index + '%'
-                if(activediv == divs[2]){
-                    activediv.children[0].src = './assets/bsvlogo_white.png';
-                }
-                else if (activediv == divs[3]) {
-                    if (enableHistory) historyCache();
-                    divs[2].children[0].src = './assets/bsvlogo_gray.png';
-                }
-                else{
-                    divs[2].children[0].src = './assets/bsvlogo_gray.png';
-                }
-                for(i=0;i<divs.length;i++){
-                    if(divs[i]!=activediv){
-                        divs[i].className = 'bottomnav_btn perfectcenter'
-                    }
-                }
-                var one = document.getElementById('page-one');
-                var two = document.getElementById('page-two');
-                var three = document.getElementById('page-three');
-                var four = document.getElementById('page-four');
-                switch(index){
-                    case 0: 
-                        clearstyle(one)
-                        one.style.display = 'block';
-                        two.style.display = 'none';
-                        three.style.display = 'none';
-                        four.style.display = 'none';
-                        document.body.style.backgroundColor = "#DCDCDC";
-                    break;
-                    case 1: 
-                        clearstyle(two)
-                        one.style.display = 'none';
-                        two.style.display = 'block';
-                        three.style.display = 'none';
-                        four.style.display = 'none';
-                        document.body.style.backgroundColor = "#DCDCDC";
-                    break;
-                    case 2: 
-                        one.style.display = 'none';
-                        two.style.display = 'none';
-                        three.style.display = 'block';
-                        four.style.display = 'none';
-                        document.body.style.backgroundColor = "#fff";
-                    break;
-                    case 3: 
-                        one.style.display = 'none';
-                        two.style.display = 'none';
-                        three.style.display = 'none';
-                        four.style.display = 'block';
-                        document.body.style.backgroundColor = "#DCDCDC";
-                    break;
-                    default:
-                        one.style.display = 'block';
-                        two.style.display = 'none';
-                        document.body.style.backgroundColor = "#DCDCDC";
-                    break;
-                        
-                }
-            }
-            //SearchBar Control
-            function expand(div){
-                div.parentElement.style.top = '66px';
-                var page = div.parentElement.parentElement
-                var p = page.querySelector(".section-prim");
-                var q = page.querySelector(".belt");
-                p.style.display = 'none';
-                q.style.display = 'none';
-            }
-            function clearstyle(page){
-                var p = page.querySelector(".section-prim");
-                var q = page.querySelector(".belt");
-                page.querySelector(".section-sec").style.top = '258px';
-                p.style.display = 'block';
-                q.style.display = 'block';
-            }
             const initScript = () => {
                 if (!localStorage.getItem('seed')) {
                     document.getElementById('msg').innerHTML = `<p>Welcome to your Tique Case!</p>
