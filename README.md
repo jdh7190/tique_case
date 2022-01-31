@@ -215,3 +215,7 @@ Contact [@cryptoacorns](https://twitter.com/cryptoAcorns) on Twitter.
 Join the [Telegram](https://t.me/+c9ISZcdmXgU1MzIx) for general support.
 
 The wallet code is open-source however the design (HTML and CSS) are copyrighted by DuckCreation.
+
+The design, UI and UX from tique.run are not open-source and subject to copyright enforcement.
+
+If developers choose to run this code they must implement their own style and design.
