@@ -4,7 +4,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta property="og:title" content="Tique Case"/>
         <meta property="og:type" content="website">
-        <meta property="og:image:url" content="./images/pwa-512x512.png">
+        <meta property="og:image:url" content="./assets/pwa-512x512.png">
         <meta property="og:description" content="Settings - Your Keepsakes on Bitcoin">
         <meta name="theme-color" content="#D3D3D3">
         <meta name="description" content="Settings - Your Keepsakes on Bitcoin">
@@ -12,10 +12,10 @@
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <link rel="manifest" href="./manifest.json">
         <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link rel="apple-touch-icon" href="./images/apple-touch-icon-180x180.png">
-        <link rel="icon" href="./images/favicon.ico">
-        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+        <link rel="apple-touch-icon" href="./assets/apple-touch-icon-180x180.png">
+        <link rel="icon" href="./assets/favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
         <link rel="stylesheet" type="text/css" href="./styles/settings.css">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&family=Roboto+Slab:wght@300&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
@@ -23,16 +23,15 @@
     <body>
         <div class="page center">
             <div class="settings">
-                <a href="./index.html"><img src="./images/back.svg" class="back" id="back"></a>
-                <div class="seedCon">
-                    <a href="./settings.html" class="title">Settings</a>
+                <a href="./index.html"><img src="./assets/back.svg" class="back" id="back"></a>
+                <div class="seedCon">SETTINGS
                 </div>
                 <div class="box backup" id="backup">
-                    <img src="./images/backup.svg" class="icon">
+                    <img src="./assets/backup.svg" class="icon">
                     <div class="seedText">Backup Seed Phrase</div>
                 </div>
                 <div class="box restore" id="restore">
-                    <img src="./images/restore.svg" class="icon">
+                    <img src="./assets/restore.svg" class="icon">
                     <div class="seedText">Restore Seed Phrase</div>
                     <div class="restoreBtn" id="restorebtn">
                         <button class="jigsBtn" type="button" id="sendbsv">RESTORE</button>
@@ -50,7 +49,6 @@
                     <label for="api">API:</label>
                     <select required id="api">
                         <option value="run">RUN</option>
-                        <option value="mattercloud">MatterCloud</option>
                         <option value="whatsonchain">WhatsOnChain</option>
                     </select>
                 </div>
@@ -63,13 +61,20 @@
                     <textarea rows="4" cols="50" id="entry" class="entry" autocomplete="off"></textarea>
                 </div>
                 <div class="box transferOwner" id="oTransfer">
-                    <img src="./images/rightarrow.svg" class="icon">
+                    <img src="./assets/rightarrow.svg" class="icon">
                     <div class="seedText">Transfer Jigs to Owner</div>
                 </div>
                 <div class="box transferPurse" id="pTransfer">
-                    <img src="./images/leftarrow.svg" class="icon">
+                    <img src="./assets/leftarrow.svg" class="icon">
                     <div class="seedText">Transfer Sats to Purse</div>
                 </div>
+                <!-- <div class="dropdown ownerpath">
+                    <label for="ownerDerivation">Owner Derivation Path:</label>
+                    <input type="text" class="path" id="ownerDerivation" placeholder="m/44'/236'/0'/2/0"><br>
+                    <label for="purseDerivation">Purse Derivation Path:</label>
+                    <input type="text" class="path" id="purseDerivation" placeholder="m/44'/236'/0'/0/0">
+                    <button type="button" class="pathbtn" id="setPath">Set</button>
+                </div> -->
             </div>
         </div>
     </body>

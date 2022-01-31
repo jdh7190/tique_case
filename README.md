@@ -44,17 +44,17 @@ In scripts/config.js the following configuration settings are available:
 | Network | Network to transact on | main   | 'main' or 'test' |
 | ownerPath | Derivation path for owner private key | m/0/0 | Any valid derivation path |
 | pursePath | Derivation path for purse private key | m/0/1 | Any valid derivation path |
-| feePerKb | Satoshis per kilobyte to pay for transactions | 500 | Lower than 500 may not be accepted by the network |
+| feePerKb | Satoshis per kilobyte to pay for transactions | 250 | Lower than 500 may not be accepted by the network |
 | app | See [here](https://run.network/docs/#api-reference-run-app) for details. | Tique Case | String of application name |
-| splits | Number of UTXOs to split purse outputs into | 1 | Integer value, ex. 10 |
-| api | Blockchain API to fetch Run transaction from | run | 'run', 'mattercloud' or 'whatsonchain' |
-| bc | Blockchain API for the purse wallet | 'mattercloud' | 'run', 'mattercloud' or 'whatsonchain'  |
-| timeout | Timeout for all Run action in ms | 10000 | 60000 |
-| feeThreshold | Threshold of satoshi amount to fetch UTXOs when paying for transactions | 1.1 | Ex. If tx cost is 5000, get enough UTXOs to pay for 5500 satoshis |
+| splits | Number of UTXOs to split purse outputs into | 10 | Integer value, ex. 10 |
+| api | Blockchain API to fetch Run transaction from | run | 'run' or 'whatsonchain' |
+| bc | Blockchain API for the purse wallet | 'run' | 'run' or 'whatsonchain'  |
+| timeout | Timeout for all Run action in ms | 600000 | 60000 |
 | enableRelayXPaymail | Whether to enable sending Jigs to RelayX | false | send.html will support @relayx.io paymails |
 | bsvTxExplorer | Blockchain explorer for Send BSV | https://whatsonchain/tx/ | Include the /tx or /t depending on url  |
 | rundbhost | URL for rundb | blank | https://localhost:6000 |
-| trust | Whether to trust no new code, all or incrementally | 0 (default) | 0 (default), 1 (none), 2 (all) |
+| trust | Whether to trust no new code, all or incrementally | 2 (all) | 0 (default), 1 (none), 2 (all) |
+| spendLimit | Satoshis spending limit for Tique.js API integrated applications | 0 | 100000000 would be a 1 BSV spending limit |
 
 ## Backup / restore
 
@@ -64,11 +64,13 @@ If you do not back up the wallet, an alert will display each time you visit a ne
 
 ## Jigs
 
-To receive jigs, click the flip icon at the bottom left of the card to display your Owner address.
+To receive jigs, copy the address on the Jigs or Tokens tab of the wallet.
 
 This address is linked to your owner key at the ownerPath derivation above.
 
-Upon receipt of Jigs, they will display in the Jigs section. If an emoji is defined on the Jig's metadata (```metadata.emoji```), then it will display in the left-most column.
+Upon receipt of Jigs (NFTs), they will display in the Jigs section. If an emoji is defined on the Jig's metadata (```metadata.emoji```), then it will display in the left-most column.
+
+Upon receipt of tokens (FTs), they will display in the Tokens section.
 
 If a transaction hash that implements the [B](https://b.bitdb.network/) protocol is associated, that will display with priority over the emoji instead.
 
@@ -110,7 +112,7 @@ Sword.metadata = {
 
 ## Sending BSV
 
-You can send BSV to an address or paymail - click the clip in the top right corner to send BSV.
+You can send BSV to an address or paymail - click the Send BitcoinSV button on the Bitcoin tab of the wallet.
 
 Paymail leverages the [Polynym API](https://polynym.io/).
 
@@ -122,7 +124,7 @@ The USD exchange rates is fetched from the [WhatsOnChain API](https://developers
 
 To receive BSV in the wallet, send BSV to the purse address.
 
-Once the BSV is sent, refresh the page to view the coins receieved.
+Once the BSV is sent, refresh the page to view the coins received.
 
 ## UTXO management
 
@@ -155,13 +157,13 @@ The following functions are implemented:
 
 ```broadcast()``` is overriden to let the purse know which UTXOs were consumed upon paying for a transaction that sends Jigs or Tokens and to delete them from ```IndexedDB```.
 
-```broadcastRawTx``` will send a raw transaction to the Bitcoin network, while caching UTXOs locally.
+```broadcastRawTx``` will send a raw transaction to the Bitcoin network, while refreshing the cached UTXOs based on the transaction sent.
 
 ## Trusted contracts
 
 Run has a concept known as [Trust](https://run.network/docs/#api-reference-run-trust-txid) where a list of contract transactions can be specified that will be loaded.
 
-By default the wallet will only load Jigs from contracts that have been received over time. 
+By default the wallet will trust all Tokens and Jigs from any contract.
 
 When a new Jig is received, that Jig's contract will be automatically added to the wallet's Trust list in ```localStorage.contracts```.
 
@@ -209,5 +211,7 @@ The Transfer function has a use-case for receiving payments based on ownership o
 Feel free to fork this repo, open issues or make pull requests.
 
 Contact [@cryptoacorns](https://twitter.com/cryptoAcorns) on Twitter.
+
+Join the [Telegram](https://t.me/+c9ISZcdmXgU1MzIx) for general support.
 
 The wallet code is open-source however the design (HTML and CSS) are copyrighted by DuckCreation.

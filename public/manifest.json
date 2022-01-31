@@ -5,9 +5,10 @@
     "scope": "./",
     "icons": [
         {
-            "src": "images/logo-512x512.png",
+            "src": "assets/logo-512x512.png",
             "sizes": "512x512",
-            "type": "image/png"  
+            "type": "image/png",
+            "purpose": "any maskable"  
         }
     ],
     "start_url": "./index.html",
@@ -19,34 +20,39 @@
             "name": "Settings",
             "description": "View Settings page",
             "url": "./settings.html",
-            "icons": [{ "src": "/images/tique_96x96.png", "sizes": "96x96" }]
+            "icons": [{ "src": "/assets/tique_96x96.png", "sizes": "96x96" }]
         },
         {
             "name": "Send BSV",
             "description": "Send BSV to a Friend",
             "url": "./sendbsv.html",
-            "icons": [{ "src": "/images/tique_96x96.png", "sizes": "96x96" }]
+            "icons": [{ "src": "/assets/tique_96x96.png", "sizes": "96x96" }]
         }
     ],
     "screenshots": [
         {
-            "src": "images/purse_ss.jpg",
-            "sizes": "1080x2044",
+            "src": "assets/fts.jpg",
+            "sizes": "1080x2280",
             "type": "image/jpg"
         },
         {
-            "src": "images/jigs_ss.jpg",
-            "sizes": "1080x2044",
+            "src": "assets/nfts.jpg",
+            "sizes": "1080x2280",
             "type": "image/jpg"
         },
         {
-            "src": "images/settings_ss.jpg",
-            "sizes": "1080x2044",
+            "src": "assets/bsvpurse.jpg",
+            "sizes": "1080x2280",
             "type": "image/jpg"
         },
         {
-            "src": "images/sendbsv_ss.jpg",
-            "sizes": "1080x2044",
+            "src": "assets/history.jpg",
+            "sizes": "1080x2280",
+            "type": "image/jpg"
+        },
+        {
+            "src": "assets/settings.jpg",
+            "sizes": "1080x2280",
             "type": "image/jpg"
         }
     ]

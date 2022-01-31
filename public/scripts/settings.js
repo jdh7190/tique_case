@@ -51,7 +51,7 @@ const restoreSeed = seedPhrase => {
         return;
     }
 }
-trust = localStorage.trust || "0";
+trust = localStorage?.trust || "2";
 document.getElementById('trust').options[trust].selected = true;
 document.getElementById('trust').onchange = () => {
     trust = document.getElementById('trust').value;
@@ -60,8 +60,7 @@ document.getElementById('trust').onchange = () => {
 const apiEval = opt => {
     switch(opt) {
         case 'run': return '0';
-        case 'mattercloud': return '1';
-        case 'whatsonchain': return '2';
+        case 'whatsonchain': return '1';
         default: throw 'Invalid API.';
     }
 }
@@ -73,13 +72,15 @@ transfer = async(from, to) => {
         let utxos = await run.blockchain.utxos(from), cache = [], foundJig = false, rtx = new Run.Transaction();
         for (let utxo of utxos) {
             const rawtx = await run.blockchain.fetch(utxo.txid);
-            if (isJig(rawtx, utxo.vout)) {
-                let jig = await tRun.load(`${utxo.txid}_o${utxo.vout}`);
-                if (jig) {
-                    rtx.update(() => { if (typeof jig !== 'function') { foundJig = true; jig.send(to) } })
+            try {
+                if (isJig(rawtx, utxo.vout)) {
+                    let jig = await tRun.load(`${utxo.txid}_o${utxo.vout}`);
+                    if (jig) {
+                        rtx.update(() => { if (typeof jig !== 'function') { foundJig = true; jig.send(to) } })
+                    }
                 }
-            }
-            else { cache.push(utxo) }
+                else { cache.push(utxo) }
+            } catch(e) { }
         }
         if (foundJig) {
             let s = confirm(`Do you want to transfer jigs from the purse to the owner?`);
@@ -127,6 +128,14 @@ document.getElementById('limitSet').addEventListener('click', () => {
     localStorage.setItem('spendLimit', spendLimit);
     alert(`Spending limit updated to ${parseInt(spendLimit)} satoshis!`);
 });
+/* document.getElementById('setPath').addEventListener('click', () => {
+    const conf = confirm('Set derivation paths?');
+    if (conf) {
+        ownerPath = document.getElementById('ownerDerivation').value;
+        pursePath = document.getElementById('purseDerivation').value;
+        restoreSeed(localStorage.seed);
+    }
+}); */
 document.getElementById('backup').addEventListener('click', showEntry)
 document.getElementById('restore').addEventListener('click', showRestore)
 restore.addEventListener('click', () => restoreSeed(null));

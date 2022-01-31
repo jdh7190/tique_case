@@ -2,11 +2,12 @@
 <html lang="en">
     <head>
         <title>Tique Case</title>
+        <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta property="og:title" content="Tique Case"/>
         <meta property="og:type" content="website">
-        <meta property="og:image:url" content="./images/logo-512x512.png">
-        <meta property="og:image" content="./images/logo-512x512.png">
+        <meta property="og:image:url" content="./assets/logo-512x512.png">
+        <meta property="og:image" content="./assets/logo-512x512.png">
         <meta property="og:description" content="Your Keepsakes on Bitcoin">
         <meta name="theme-color" content="#D3D3D3">
         <meta name="description" content="Your Keepsakes on Bitcoin">
@@ -16,118 +17,326 @@
         <meta name="description" content="Your Keepsakes on Bitcoin">
         <meta name="apple-mobile-web-app-title" content="Tique Case">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
-        <link rel="stylesheet" type="text/css" href="./styles/style.css">
         <link rel="manifest" href="./manifest.json">
-        <link rel="preconnect" href="https://fonts.gstatic.com">
+        <link rel="stylesheet" href = './styles/tique.css'>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <script src="./scripts/fontawesome.js"></script>
         <link rel="apple-touch-icon" href="./images/apple-touch-icon.png">
         <link rel="icon" href="./favicon.ico">
-        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
-        <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&family=Roboto+Slab:wght@300&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
+        <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
+        <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Permanent+Marker&family=Roboto&family=Roboto+Slab&display=swap" rel="stylesheet">
     </head>
     <body>
-        <a class="skip-link" href="#purselink" alt="Purse link">#</a>
-        <div class="page center">
-            <div class="extension">
-                <div id="purse">
-                    <div class="purseCon" id="purselink">
-                        <img src="./images/Purse.svg" class="purselogo" alt="Purse">
-                    </div>
-                    <a href="./settings.html"><img src="./images/settings-24px.svg" class="settings" alt="Settings"></a>
-                    <div class="clip" id="sendbsv"><div class="sendbsv">SEND BSV</div></div>
-                    <div class="purse">
-                        <div class="flip-card" id="flipCard">
-                            <div class="flip-card-inner" id="flipInner">
-                                <div class="card" id="card">
-                                    <div class="purseLabel" id="walletLabel">Purse Balance</div>
-                                    <div class="purseBalance" id="bsvBalance"></div>
-                                    <div class="qrcode" id="qrAddr"></div>
-                                    <div class="purseAddr" id="addr">
-                                        <input type="text" id="purseAddr" class="addrInput" readonly>
-                                        <img src="./images/copy.svg" class="copy" id="copyAddr" alt="copy">
-                                    </div>
-                                    <div class="flip"><img src="./images/flip.svg" id="flip" alt="flip"></div>
-                                </div>
-                                <div class="ocard" id="ownerCard">
-                                    <div class="black"></div>
-                                    <div class="ownerLabel" id="walletLabel">Owner Address</div>
-                                    <div class="jigsBalance" id="jigBalance"></div>
-                                    <div class="oqrcode" id="oqrAddr"></div>
-                                    <div class="ownerAddr" id="oaddr">
-                                        <input type="text" id="ownerAddr" class="oaddrInput" readonly>
-                                        <img src="./images/copy.svg" class="ocopy" id="ocopyAddr" alt="copy">
-                                    </div>
-                                    <div class="flip"><img src="./images/flip.svg" id="oflip" alt="flip"></div>
-                                </div>
-                            <div>
-                        </div>
-                    </div>
-                </div>
-                <div class="jigs">
-                    <a href="./history.html" class="history"><img src="./images/history.svg"></a>
-                    <div class="titleCon"><img src="./images/Jigs.svg" class="jigslogo" alt="Jigs"></div>
-                    <button class="jigsBtn" type="button" id="sendjigs">SEND JIGS</button>
-                    <div class="lds-ellipsis" id="loading"><div></div><div></div><div></div><div></div></div>
-                    <div class="jigsList" id="tokens"><ul class="list" id="list"></ul></div>
+        <div id='menu' class="hamburgmenu" onclick='openSideNav()'><svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></div>
+        <!--PAGE 1/4 JIG-->
+        <div id='page-one'>
+            <h1 class='title'>Jig</h1>
+            <div class='section-prim'>
+                <div class='center topimg'>
+                    <img src='./assets/treasurechest.png' width='116px'>
                 </div>
             </div>
-            <div id="modal" class="modal center">
-                <div class="modal-content">
-                   <span id='closem' class="close">&times;</span>
-                   <p id="msg"></p>
+            <div class='belt'>
+                <div>
+                    <p class='font-prim'>Receive NFTs:
+                        <span class='font-sec adrs' id="ownerAddr"></span>
+                        <i class="fas fa-qrcode fa-lg qrcode"></i>
+                        <i class="far fa-copy fa-lg copyadrs" onclick='showtooltip(this)' id="ocopyAddr">
+                            <span class="tooltip font-prim">Copied</span>
+                        </i>
+                    </p>
                 </div>
-             </div>
+            </div>
+            <div class='section-sec'>
+                <input class="searchbar font-prim" type="text" id="nftSearch" onkeyup="search(this.id)" placeholder="Search" onclick="expand(this)">
+                <div class='cardlist font-sec' id="nftlist">
+                    <div class="lds-ellipsis" id="loading"><div></div><div></div><div></div><div></div></div>
+                </div>
+            </div>
         </div>
+        <!--PAGE 2/4 Token-->
+        <div id='page-two'>
+            <h1 class='title'>Token</h1>
+            <div class='section-prim'>
+                <div class='center topimg'>
+                    <img src='./assets/token.svg' width='116px' style='top:30px;'>
+                </div>
+            </div>
+            <div class='belt'>
+                <div>
+                    <p class='font-prim'>Receive Tokens:
+                        <span class='font-sec adrs' id="tokenAddr"></span>
+                        <i class="fas fa-qrcode fa-lg qrcode"></i>
+                        <i class="far fa-copy fa-lg copyadrs" onclick='showtooltip(this)' id="tcopyAddr">
+                            <span class="tooltip font-prim">Copied</span>
+                        </i>
+                    </p>
+                </div>
+            </div>
+            <div class='section-sec'>
+                <input class="searchbar font-prim" type="text" id="tokenSearch" onkeyup="search(this.id)" placeholder="Search" onclick="expand(this)">
+                <div class='cardlist font-sec' id="tokenlist"></div>
+            </div>
+        </div>
+        <!--PAGE 3/4 Bitcoin-->
+        <div id='page-three'>
+            <h1 class='title'>Bitcoin</h1>
+            <div class="section-prim">
+                <div class='center'>
+                    <div class='purse'>
+                        <span class='font-prim label'>Purse Balance:</span>
+                        <span class='font-sec amount' id="bsvBalance"></span>
+                    </div>
+                </div>
+            </div>
+            <div class='belt grey'>
+                <div>
+                    <p class='font-prim'>Receive Bitcoin:
+                        <span class='font-sec adrs' id="purseAddr"></span>
+                        <i class="fas fa-qrcode fa-lg qrcode"></i>
+                        <i class="far fa-copy fa-lg copyadrs" onclick='showtooltip(this)' id="pcopyAddr">
+                            <span class="tooltip font-prim">Copied</span>
+                        </i>
+                    </p>
+                </div>
+            </div>
+            <div class='section-sec bitcoin'>
+                <div class='center'>
+                    <div id='sendbsv' class='simplebtn'>
+                        <img src='./assets/bsvlogo_color.svg' class="bsvicon">
+                        Send BitcoinSV
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!--PAGE 4/4 History-->
+        <div id='page-four'>
+            <div id='lock' class='modal lock'>
+                <div class='modal-content perfectcenter'>
+                    <div style='text-align:center'>
+                        <div id="marketimg">
+                            <img class="marketimg" src="./assets/tomeofhistory.png">
+                        </div>
+                        <p class='font-prim' >Purchase a Tome NFT to unlock the History feature!</p>
+                        <a class='tomelink' href="./tomeofhistory/"><div class='simplebtn'>Go to Market</div></a>
+                    </div>
+                </div>
+            </div>
+            <h1 class='title'>History</h1>
+            <div class='section-sec up'>
+                <div class='cardlist font-sec' id="historylist"></div>
+                <div class="lds-ellipsis" id="loadinghist"><div></div><div></div><div></div><div></div></div>
+            </div>
+        </div>
+        <!--Side Navigation-->
+        <div class='modal'>
+            <span class="modalclose" onclick='closeSideNav()'>&times;</span>
+            <div id='sidenav'>
+                <a href = "/"  class='center sidenav_logo'>
+                    <img src='./assets/tiquelogo.png' width='200px' style='height:25%;max-height:200px'>
+                </a>  
+                <a href="./settings.html" class="settingLink"><div class='simplebtn'>Settings</div></a>
+                <!-- <div class='simplebtn'>Developer</div>
+                <div class='simplebtn'>FAQ</div> -->
+                <a href="./tomeofhistory/" class="tomelink">
+                    <div class='simplebtn tomebtn' id="tome">Tome of History</div>
+                </a>
+                <div class='center'>
+                    <div id='socialicons' class='fa-2x'>
+                        <a href="https://github.com/jdh7190/tique_case" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://twitter.com/cryptoAcorns" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.youtube.com/c/JoshuaHenslee" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://t.me/+c9ISZcdmXgU1MzIx" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!--Bottom Navigation-->
+        <div class='indicator'><div id='indicator_bar'></div></div>
+        <div id='bottomnav'>
+            <div class='bottomnav_btn perfectcenter' onclick='btnactive(this,0)'><i class="fas fa-puzzle-piece fa-2x"></i></div>
+            <div class='bottomnav_btn perfectcenter' onclick='btnactive(this,1)'><i class="fas fa-coins fa-2x"></i></div>
+            <div class='bottomnav_btn perfectcenter' onclick='btnactive(this,2)'><img src='./assets/bsvlogo_gray.png' width='24px'></div>
+            <div class='bottomnav_btn perfectcenter' onclick='btnactive(this,3)'><i class="fas fa-history fa-2x"></i></div>
+        </div>
+
+        <!--Modal-->
+        <div id='dModal' class='modal'>
+            <span class="modalclose" onclick='closeDModal()'>&times;</span>
+            <div class='modal-content perfectcenter'>
+                <img src="./assets/tiquelogo.png" class="intrologo">
+                <div class="modalDiv">
+                    <p class='font-prim' id="msg"></p>
+                    <!-- <div class='simplebtn'></div> -->
+                </div>
+            </div>
+        </div>
+
+        <!--QRCode-->
+        <div id='qModal' class='modal'>
+            <span class="modalclose" onclick='closeQModal()'>&times;</span>
+            <div class='modal-content perfectcenter qrmdl'>
+                <div class="modalDiv">
+                    <div id="qr" class="perfectcenter" class="qrcode"></div>
+                    <p class='font-prim' id="qmsg"></p>
+                </div>
+            </div>
+        </div>
+        <script>
+            //SideNavigation Control
+            var sidenav = document.getElementById('sidenav').parentElement;
+            var dModal = document.getElementById('dModal');
+            var qModal = document.getElementById('qModal');
+            var script;
+            onclick = event => {
+                if (event.target == sidenav) {
+                    sidenav.style.display = "none";
+                }
+                if (event.target == dModal) {
+                    dModal.style.display = "none";
+                }
+                if (event.target == qModal) {
+                    qModal.style.display = "none";
+                }
+            }
+            function openSideNav() {
+                sidenav.style.display = 'block';
+            }
+            function closeSideNav() {
+                sidenav.style.display = 'none';
+            }
+            function closeQModal() {
+                qModal.style.display = 'none';
+            }
+            function closeDModal() {
+                dModal.style.display = 'none';
+            }
+
+            //Show tooltip on Click
+            function showtooltip(div){
+                const clipboard = navigator.clipboard;
+                const copyText = div.id === 'ocopyAddr' || div.id === 'tcopyAddr' ? document.getElementById('ownerAddr') : document.getElementById('purseAddr');
+                clipboard.writeText(copyText.innerText);
+                var t = div.querySelector('.tooltip');
+                t.className = t.className + ' show';
+                setTimeout(() => { t.className = t.className.replace("show", "") }, 1000);
+            }
+
+            //BottomNavigation Control
+            function btnactive(activediv,index){
+                activediv.className = activediv.className + ' active';
+                var divs = document.getElementById('bottomnav').children;
+                var bar = document.getElementById('indicator_bar');
+                bar.style.left = 25*index + '%'
+                if(activediv == divs[2]){
+                    activediv.children[0].src = './assets/bsvlogo_white.png';
+                }
+                else if (activediv == divs[3]) {
+                    if (enableHistory) historyCache();
+                    divs[2].children[0].src = './assets/bsvlogo_gray.png';
+                }
+                else{
+                    divs[2].children[0].src = './assets/bsvlogo_gray.png';
+                }
+                for(i=0;i<divs.length;i++){
+                    if(divs[i]!=activediv){
+                        divs[i].className = 'bottomnav_btn perfectcenter'
+                    }
+                }
+                var one = document.getElementById('page-one');
+                var two = document.getElementById('page-two');
+                var three = document.getElementById('page-three');
+                var four = document.getElementById('page-four');
+                switch(index){
+                    case 0: 
+                        clearstyle(one)
+                        one.style.display = 'block';
+                        two.style.display = 'none';
+                        three.style.display = 'none';
+                        four.style.display = 'none';
+                        document.body.style.backgroundColor = "#DCDCDC";
+                    break;
+                    case 1: 
+                        clearstyle(two)
+                        one.style.display = 'none';
+                        two.style.display = 'block';
+                        three.style.display = 'none';
+                        four.style.display = 'none';
+                        document.body.style.backgroundColor = "#DCDCDC";
+                    break;
+                    case 2: 
+                        one.style.display = 'none';
+                        two.style.display = 'none';
+                        three.style.display = 'block';
+                        four.style.display = 'none';
+                        document.body.style.backgroundColor = "#fff";
+                    break;
+                    case 3: 
+                        one.style.display = 'none';
+                        two.style.display = 'none';
+                        three.style.display = 'none';
+                        four.style.display = 'block';
+                        document.body.style.backgroundColor = "#DCDCDC";
+                    break;
+                    default:
+                        one.style.display = 'block';
+                        two.style.display = 'none';
+                        document.body.style.backgroundColor = "#DCDCDC";
+                    break;
+                        
+                }
+            }
+            //SearchBar Control
+            function expand(div){
+                div.parentElement.style.top = '66px';
+                var page = div.parentElement.parentElement
+                var p = page.querySelector(".section-prim");
+                var q = page.querySelector(".belt");
+                p.style.display = 'none';
+                q.style.display = 'none';
+            }
+            function clearstyle(page){
+                var p = page.querySelector(".section-prim");
+                var q = page.querySelector(".belt");
+                page.querySelector(".section-sec").style.top = '258px';
+                p.style.display = 'block';
+                q.style.display = 'block';
+            }
+            const initScript = () => {
+                if (!localStorage.getItem('seed')) {
+                    document.getElementById('msg').innerHTML = `<p>Welcome to your Tique Case!</p>
+    
+    <p>The Tique Case is a wallet that manages your Tokens and Jigs!</p>
+    
+    <p>This wallet has 2 sets of keys, the purse and <strong>owner</strong>.</p>
+    
+    <p>You must have funded your purse with Bitcoin SV before you can send jigs!</p>`;
+                    dModal.style.display = 'block';
+                    var head = document.getElementsByTagName('head')[0];
+                    script = document.createElement('script');
+                    script.src = 'scripts/bsv-mnemonic.min.js';
+                    head.appendChild(script);
+                }
+            }
+            initScript();
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('./serviceworker.js', { scope: './' })
+                .then(registration => {console.log('Registration successful, scope is:', registration.scope)})
+                .catch(error => {console.log('Service worker registration failed, error:', error)});
+            }
+        </script>
+        <script src="./scripts/centrifuge.js"></script>
+        <script src="./scripts/bsv.browser.min.js" defer></script>
+        <script src="./scripts/config.js" defer></script>
+        <script src="./scripts/run.browser.min.js" defer></script>
+        <script src="./scripts/twemoji.min.js"></script>
+        <script src="./scripts/idb.js"></script>
+        <script src="./scripts/helpers.js"></script>
+        <script src="./scripts/purse.js" defer></script>
+        <script src="./scripts/qrcode.min.js"></script>
+        <script src="./scripts/history.js" defer></script>
+        <script src="./scripts/wallet.js" defer></script>
     </body>
-    <script>
-        var script;
-        var modal = document.getElementById('modal');
-        var span = document.getElementById('closem');
-        span.onclick = () => {
-            modal.style.display = 'none';
-            flip();
-        }
-        window.onclick = event => {
-            if (event.target == modal) {
-                modal.style.display = "none";
-                flip();
-            }
-        }
-        const initScript = () => {
-            if (!localStorage.getItem('seed')) {
-                document.getElementById('msg').innerHTML = `<p>Welcome to your Tique Case!</p>
-
-<p>The Tique Case is a wallet that manages your Tokens and Jigs!</p>
-
-<p>This wallet has 2 sets of keys, the purse and <strong>owner</strong>.</p>
-
-<p>To receive Tokens & Jigs, click the flip <img src="./images/flip.svg" id="flip" alt="flip"> icon at the bottom left of the card to reveal your owner address.</p>
-
-<p>To send jigs, click a row in the Jigs section -> Send Jigs.</p>
-
-<p>You must have funded your purse with Bitcoin SV before you can send jigs!</p>`;
-                modal.style.display = 'block';
-                var head = document.getElementsByTagName('head')[0];
-                script = document.createElement('script');
-                script.src = 'scripts/bsv-mnemonic.min.js';
-                head.appendChild(script);
-            }
-        }
-        initScript();
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('./serviceworker.js', { scope: './' })
-            .then((registration) => {console.log('Registration successful, scope is:', registration.scope)})
-            .catch((error) => {console.log('Service worker registration failed, error:', error)});
-        }
-    </script>
-    <script src="./scripts/centrifuge.js"></script>
-    <script src="./scripts/bsv.browser.min.js" defer></script>
-    <script src="./scripts/config.js" defer></script>
-    <script src="./scripts/run.browser.min.js" defer></script>
-    <script src="./scripts/twemoji.min.js"></script>
-    <script src="./scripts/idb.js"></script>
-    <script src="./scripts/helpers.js"></script>
-    <script src="./scripts/purse.js" defer></script>
-    <script src="./scripts/qrcode.min.js"></script>
-    <script src="./scripts/wallet.js" defer></script>
 </html>

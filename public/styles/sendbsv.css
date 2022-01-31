@@ -17,6 +17,8 @@
     margin-top: 4px;
     left: 130px;
     position: absolute;
+    font-family: 'Permanent Marker', cursive;
+    font-size: 32px;
 }
 .back {
     top: 12px;

@@ -1,22 +1,4 @@
-const addToList = () => {
-    let row = document.createElement('p');
-    let emojiSpan = document.createElement('span');
-    emojiSpan.className = "emoji";
-    emojiSpan.innerHTML = `<img src="images/bsv-icon.svg" class="emoji">`
-    row.appendChild(emojiSpan);
-    let nameSpan = document.createElement('span');
-    nameSpan.id = 'contractName';
-    nameSpan.className = 'contractName';
-    nameSpan.innerText = `Bitcoin SV`;
-    row.appendChild(nameSpan);
-    let bal = document.createElement('span');
-    bal.className = "tokenBalance"
-    bal.innerText = localStorage.getItem('purseSats');
-    row.appendChild(bal)
-    let tokensDiv = document.getElementById('tokens');
-    tokensDiv.appendChild(row);
-}
-addToList();
+document.getElementById('tokenBalance').innerText = localStorage.getItem('purseSats');
 initRun();
 const sendBSV = async() => {
     amt = parseInt(parseFloat(document.getElementById('sendamt').value) * 100000000);
@@ -26,7 +8,7 @@ const sendBSV = async() => {
     if (!pubkey || (!pubkey.includes('@') && !pubkey.includes('$') && !validAddr)) { alert('Please specify a Paymail or Address.'); return }
     try {
         const utxos = await run.purse.getUTXOs(amt);
-        const sent = await run.purse.send(utxos, pubkey, amt);
+        const sent = await run.purse.send(utxos, pubkey, amt, amt === parseInt(localStorage.purseSats*100000000));
         if (sent) {
             document.getElementById('jigscon').style.display = 'none';
             document.getElementById('confirm').style.display = 'block';

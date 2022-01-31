@@ -29,52 +29,68 @@ const spent = tx => {
     });
     return utxos;
 }
-setImage = (emojiSpan, metadata, def, origin) => {
+setImage = (metadata, def, origin) => {
+    let img;
+    if (metadata?.image === '_o1' && !def && !metadata.emoji) {
+        img = `<img class="emoji" src="https://mornin.run/${origin}/img.png" alt="bfile">`;
+        addImage({ origin, img });
+        return img;
+    }
     if (def?.origin === '1ba1080086ca6624851e1fbff18d903047f2b75d3a9ffe5cc8bf49ed0fdb36a0_o2' && origin) { // Gopniks contract
-        emojiSpan.innerHTML = `<img class="emoji" src="https://mornin.run/${origin}/img.png" alt="bfile">`;
+        img = `<img class="emoji" src="https://mornin.run/${origin}/img.png" alt="bfile">`;
     } else {
         if (metadata && !def) {
             if (metadata.image) {
-                emojiSpan.innerHTML = `<img class="emoji" src="data:${metadata.image.mediaType};base64, ${metadata.image.base64Data}" alt="bfile">`;
+                img = `<img class="emoji" src="data:${metadata.image.mediaType};base64, ${metadata.image.base64Data}" alt="bfile">`;
             }
             else {
-                emojiSpan.innerHTML = twemoji.parse(metadata.emoji);
+                img = twemoji.parse(metadata.emoji);
             }
         }
         else if (def?.metadata) {
             if (def.metadata.image === '_o1') {
-                emojiSpan.innerHTML = `<img class="emoji" src="https://mornin.run/${def.origin}/img.png" alt="bfile">`;
+                img = `<img class="emoji" src="https://mornin.run/${def.origin}/img.png" alt="bfile">`;
                 
-            } else {
+            }
+            else if (def?.metadata?.image && typeof def.metadata.image === 'string') {
+                const match = def.metadata.image.match(/^[0-9a-f]{64}_o[1-9][0-9]*$/g);
+                if (match.length > 0) {
+                    const bTxid = match[0].slice(0,64);
+                    img = `<img class="emoji" src="https://bico.media/${bTxid}" alt="bfile">`;
+                }
+            }
+            else {
                 if (def.metadata.image) {
-                    emojiSpan.innerHTML = `<img class="emoji" src="data:${def.metadata.image.mediaType};base64, ${def.metadata.image.base64Data}" alt="bfile">`;
+                    img = `<img class="emoji" src="data:${def.metadata.image.mediaType};base64, ${def.metadata.image.base64Data}" alt="bfile">`;
                 }
                 else {
-                    emojiSpan.innerHTML = twemoji.parse(def.metadata.emoji);
+                    img = twemoji.parse(def.metadata.emoji);
                 }
             }
         }
-        else { emojiSpan.innerHTML = twemoji.parse('🐉') }
+        else { img = twemoji.parse('🐉') }
     }
-    return emojiSpan;
+    img ? addImage({ origin: def?.origin || origin, img }) : `<img class="emoji" src="https://mornin.run/${origin}/img.png" onerror="this.onerror=null;this.src='https://tique.run/images/logo-512x512.png';">`; 
+    return img;
 }
-setName = (nameSpan, contract, def, loc, network, isNFT) => {
+setName = (contract, def, loc, network, isNFT) => {
+    let n;
     if (isNFT) {
         const nftName = contract?.constructor?.metadata?.name || contract?.name || def?.name;
-        nameSpan.innerHTML = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${nftName}</a>`;
-        nameSpan.innerText = `${nftName}`;
+        n = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${nftName}</a>`;
+        n = `${nftName}`;
     } else {
         if (contract?.metadata) {
-            nameSpan.innerHTML = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${contract?.metadata?.name || contract.name}</a>`;
-            nameSpan.innerText = `${contract?.metadata?.name || contract.name}`;
+            n = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${contract?.metadata?.name || contract.name}</a>`;
+            n = `${contract?.metadata?.name || contract.name}`;
         }
         else if (def) {
-            nameSpan.innerHTML = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${def?.metadata?.name || def.name}</a>`;
-            nameSpan.innerText = `${def?.metadata?.name || def.name}`;
+            n = `<a href=https://run.network/explorer/?query=${loc}&network=${network} target="_blank">${def?.metadata?.name || def.name}</a>`;
+            n = `${def?.metadata?.name || def.name}`;
         }
-        else { nameSpan.innerText = `${contract.name}` }
+        else { n = `${contract.name}` }
     }
-    return nameSpan;
+    return n;
 }
 softRefresh = async() => {
     let r = await exchrate();
@@ -88,8 +104,8 @@ hardRefresh = () => {
     clearUTXOs();
     clearHistory();
     clearRunCache();
-    trust = "0";
-    localStorage.setItem('trust', "0");
+    trust = "2";
+    localStorage.setItem('trust', "2");
 }
 const initRun = (trst, purse, owner, useCustomPurse = true, activate) => {
     if (!owner) owner = localStorage.getItem('ownerKey');
@@ -106,6 +122,7 @@ const initRun = (trst, purse, owner, useCustomPurse = true, activate) => {
         if (state) {
             run.state = state
             run.client = true;
+            run.trust(['cache'])
         }
         return run;
     }
@@ -114,8 +131,9 @@ const initRun = (trst, purse, owner, useCustomPurse = true, activate) => {
 isJig = (rawtx, vout) => {
     const tx = new bsv.Transaction(rawtx)
     if (!tx.outputs.length) return false
-    if (tx.outputs[0].script.chunks.length < 6) return false
-    const chunks = tx.outputs[0].script.chunks
+    const RUN_OUTPUT = tx.outputs.find(o => o.script.chunks[2].buf.toString('utf8') === 'run');
+    if (!RUN_OUTPUT) return false;
+    const chunks = RUN_OUTPUT.script.chunks
     if (!chunks[2].buf) return false
     const prefix = chunks[2].buf.toString('utf8')
     if (prefix !== 'run') return false
@@ -123,7 +141,7 @@ isJig = (rawtx, vout) => {
     const payload = chunks[5].buf.toString('utf8')
     try {
       const json = JSON.parse(payload)
-      return vout >= 1 && vout <= json.out.length
+      return vout >= 0 && json.out.length > 0
     }
     catch (e) { return false }
 }
@@ -193,7 +211,6 @@ const timeago = ms => {
 }
 trustContracts = run => {
     const contracts = JSON.parse(localStorage.getItem('contracts') || '[]');
-    console.log({contracts})
     if (contracts.length) {
         contracts.forEach(contract => {
             if (!banned.includes(contract)) {
@@ -217,13 +234,47 @@ getPaymailAddress = async paymail => {
     const { address } = await (await fetch(`https://api.polynym.io/getAddress/${paymail}`)).json();
     return address;
 }
-const destroyJig = async location => {
-    const jig = await run.load(location);
-    await jig.sync();
+const destroyJig = async (location, tokens) => {
+    const base = bsv.Transaction().to(BURN_FEE_ADDRESS, 1000);
     const tx = new Run.Transaction();
-    tx.update(() => {
-        jig.destroy();
-    })
+    tx.base = base;
+    if (tokens?.length) {
+        if (tokens.length > 1) {tx.update(() => tokens[0].combine(...tokens.slice(1))) }
+        tx.update(() => tokens[0].destroy());
+    } else {
+        const jig = await run.load(location);
+        await jig.sync();
+        tx.update(() => jig.destroy())
+    }
     const rawtx = await tx.export();
-    console.log(rawtx)
+    return rawtx;
+}
+const between = (x, min, max) => { return x >= min && x <= max }
+const search = id => {
+    let input = document.getElementById(id), filter = input.value.toUpperCase(), cards, list, a, txtValue;
+    list = document.getElementById(id === 'tokenSearch' ? 'tokenlist' : 'nftlist');
+    cards = list.getElementsByTagName('div');
+    for (let i = 0; i < cards.length; i++) {
+        a = cards[i].getElementsByClassName('card_label')[0];
+        if (a) {
+            txtValue = a?.innerHTML || a?.innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {cards[i].style.display = ''}
+            else {cards[i].style.display = 'none'}
+        }
+    }
+}
+const sumSatoshis = arr => {
+    return arr.reduce((a,b) => {return a + b.satoshis}, 0);
+}
+const postTxToDB = async(tx, url, hex) => {
+    url = url ? url : rundbhost;
+    if (url) {
+        if (hex) {
+            const r = await (await fetch(`${url}/tx/${tx}`, { method: 'post', body: hex })).text()
+            console.log({r})
+        } else {
+            const r = await (await fetch(`${url}/tx/${tx}`, { method: 'post' })).text()
+            console.log({r})
+        }
+    }
 }

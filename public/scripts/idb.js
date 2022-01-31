@@ -1,17 +1,35 @@
 const initTiqueCaseDB = () => {
     return new Promise((resolve, reject) => {
-        const request = indexedDB.open('tiquecase', 1);
+        const request = indexedDB.open('tiquecase', dbVersion);
         request.onupgradeneeded = e => {
-            console.log('upgrading...');
-            let d = indexedDB.deleteDatabase('purse');
-            d.onsuccess = e => { console.log('purse DB deleted.', e) }
             const db = e.target.result;
-            db.createObjectStore('utxos', { keyPath: 'output' });
-            console.log(`upgrade is called for table: ${db.name}`, e);
-            db.createObjectStore('history', { keyPath: 'txid' });
-            console.log(`upgrade is called for table: ${db.name}`, e);
-            db.createObjectStore('ownerUTXOs', { keyPath: 'output' });
-            console.log(`upgrade is called for table: ${db.name}`, e);
+            console.log({e}, e.oldVersion)
+            switch(e.oldVersion) {
+                case 0:
+                    let d = indexedDB.deleteDatabase('purse');
+                    d.onsuccess = e => { console.log('purse DB deleted.', e) }
+                    db.createObjectStore('utxos', { keyPath: 'output' });
+                    console.log(`upgrade is called for table: ${db.name}`, e);
+                    db.createObjectStore('history', { keyPath: 'txid' });
+                    console.log(`upgrade is called for table: ${db.name}`, e);
+                    db.createObjectStore('ownerUTXOs', { keyPath: 'output' });
+                    console.log(`upgrade is called for table: ${db.name}`, e);
+                    break;
+                case 1:
+                    clearHistory();
+                    const tx = e.target.transaction;
+                    const historyObjectStore = tx.objectStore('history');
+                    historyObjectStore.createIndex('time_idx', 'time');
+                    console.log(`${db.name} table upgraded.`, e);
+                    db.createObjectStore('permissions', { keyPath: 'url'});
+                    console.log(`${db.name} table created.`, e);
+                    db.createObjectStore('contractImages', { keyPath: 'origin'} )
+                    console.log(`${db.name} table created.`, e);
+                    break;
+                default:
+                    break;
+            }
+            console.log(`upgrading to version ${e.newVersion}`);
         }
         request.onsuccess = e => { resolve(e.target.result) }
         request.onerror = e => {
@@ -20,10 +38,10 @@ const initTiqueCaseDB = () => {
         }
     })
 }
-initTiqueCaseDB();
+//initTiqueCaseDB();
 const addUTXO = utxo => {
     if (idb) {
-        const request = indexedDB.open('tiquecase', 1);
+        const request = indexedDB.open('tiquecase', dbVersion);
         request.onsuccess = e => {
             console.log('adding utxo...');
             let db = e.target.result;
@@ -37,7 +55,7 @@ const addUTXO = utxo => {
 }
 const cachedUtxos = cb => {
     if (idb) {
-        const request = indexedDB.open('tiquecase', 1);
+        const request = indexedDB.open('tiquecase', dbVersion);
         request.onsuccess = e => {
             db = e.target.result;
             const tx = db.transaction('utxos', 'readonly');
@@ -56,7 +74,7 @@ const getCachedUTXOs = () => {
 }
 const removeUtxo = (output, cb) => {
     if (idb) {
-        const request = indexedDB.open('tiquecase', 1);
+        const request = indexedDB.open('tiquecase', dbVersion);
         request.onsuccess = e => {
             db = e.target.result;
             const tx = db.transaction('utxos', 'readwrite');
@@ -75,7 +93,7 @@ const deleteUTXO = output => {
 }
 const clearUTXOs = utxos => {
     if (idb) {
-        const request = indexedDB.open('tiquecase', 1);
+        const request = indexedDB.open('tiquecase', dbVersion);
         request.onsuccess = e => {
             let db = e.target.result;
             console.log('success');
@@ -92,7 +110,7 @@ const clearUTXOs = utxos => {
 }
 const clearHistory = () => {
     if (idb) {
-        const request = indexedDB.open('tiquecase', 1);
+        const request = indexedDB.open('tiquecase', dbVersion);
         request.onsuccess = e => {
             let db = e.target.result;
             console.log('success');
@@ -105,6 +123,60 @@ const clearHistory = () => {
         }
         request.onerror = e => { console.log('error', e) }
     }
+}
+const addImage = image => {
+    if (idb) {
+        const request = indexedDB.open('tiquecase', dbVersion);
+        request.onsuccess = e => {
+            let db = e.target.result;
+            const tx = db.transaction('contractImages', 'readwrite');
+            const table = tx.objectStore('contractImages');
+            try {
+                table.add(image);
+            } catch(e) {
+                console.log(e, {image});
+            }
+        }
+        request.onerror = e => { console.log('error', e) }
+    }
+}
+const getImage = (origin, cb) => {
+    if (idb) {
+        const request = indexedDB.open('tiquecase', dbVersion);
+        request.onsuccess = e => {
+            db = e.target.result;
+            const tx = db.transaction('contractImages', 'readonly');
+            const table = tx.objectStore('contractImages');
+            const img = table.get(origin);
+            img.onsuccess = e => {
+                const img = e.target.result;
+                return cb(img);
+            }
+        }
+        request.onerror = e => { console.log('error', e) }
+    } else { cb({}) }
+}
+const getContractImage = origin => {
+    return new Promise((resolve, reject) => { getImage(origin, img => { img ? resolve(img) : resolve({}) }) })
+}
+const cachedImages = cb => {
+    if (idb) {
+        const request = indexedDB.open('tiquecase', dbVersion);
+        request.onsuccess = e => {
+            db = e.target.result;
+            const tx = db.transaction('contractImages', 'readonly');
+            const table = tx.objectStore('contractImages');
+            const images = table.getAll();
+            images.onsuccess = e => {
+                const images = e.target.result;
+                return cb(images);
+            }
+        }
+        request.onerror = e => { console.log('error', e) }
+    } else { cb([]) }
+}
+const getCachedImages = () => {
+    return new Promise((resolve, reject) => { cachedUtxos(images => { images.length ? resolve(images) : resolve([]) }) })
 }
 const clearRunCache = () => {
     if (idb) {

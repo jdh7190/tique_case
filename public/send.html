@@ -4,21 +4,21 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta property="og:title" content="Tique Case"/>
         <meta property="og:type" content="website">
-        <meta property="og:image:url" content="./images/pwa-512x512.png">
+        <meta property="og:image:url" content="./assets/pwa-512x512.png">
         <meta property="og:description" content="Send Jigs - Your Keepsakes on Bitcoin">
         <meta name="theme-color" content="#D3D3D3">
         <meta name="description" content="Send Jigs - Your Keepsakes on Bitcoin">
         <meta name="twitter:card" content="summary"/>
         <meta name="twitter:creator" content="@cryptoacorns"/>
-        <meta name="twitter:image" content="https://tique.run/images/pwa-512x512.png"/>
+        <meta name="twitter:image" content="https://tique.run/assets/pwa-512x512.png"/>
         <meta name="apple-mobile-web-app-title" content="Tique Case">
         <meta name="apple-mobile-web-app-status-bar-style" content="black">
         <link rel="manifest" href="./manifest.json">
         <link rel="preconnect" href="https://fonts.gstatic.com">
-        <link rel="apple-touch-icon" href="./images/apple-touch-icon-180x180.png">
+        <link rel="apple-touch-icon" href="./assets/apple-touch-icon-180x180.png">
         <link rel="icon" href="./favicon.ico">
-        <link rel="icon" type="image/png" sizes="32x32" href="./images/favicon-32x32.png">
-        <link rel="icon" type="image/png" sizes="16x16" href="./images/favicon-16x16.png">
+        <link rel="icon" type="image/png" sizes="32x32" href="./assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="./assets/favicon-16x16.png">
         <link rel="stylesheet" type="text/css" href="./styles/send.css">
         <link rel="preconnect" href="https://fonts.gstatic.com">
         <link href="https://fonts.googleapis.com/css2?family=Permanent+Marker&family=Courier+Prime:wght@400;700&family=Roboto+Slab:wght@300&family=Roboto:wght@100;300&display=swap" rel="stylesheet">
@@ -27,13 +27,17 @@
         <div class="page center">
             <div class="extension">
                 <div class="jigs">
-                    <div class="titleCon">
-                        <img src="./images/Jigs.svg">
-                    </div>
-                    <a href="./index.html"><img src="./images/back.svg" class="back" id="back"></a>
+                    <div class="titleCon">JIGS</div>
+                    <a href="./index.html"><img src="./assets/back.svg" class="back" id="back"></a>
                     <div id="jigscon">
                         <div class="label curBal">Current Balance</div>
-                        <div class="jigsList" id="tokens"></div>
+                        <div class="jigsList" id="tokens">
+                            <p>
+                                <span class="emoji" id="img"></span>
+                                <span id="contractName" class="contractName"></span>
+                                <span id="tokenBalance" class="tokenBalance"></span>
+                            </p>
+                        </div>
                         <div id="tokenamt" class="tokenamt">
                             <div class="label amtlabel">Amount to Send</div>
                             <div>
@@ -47,9 +51,10 @@
                         <div class="send">
                             <button class="jigsBtn" type="button" id="sendjig">SEND</button>
                         </div>
+                        <!-- <button class="jigsBtn burnbtn center" type="button" id="burnjig">BURN</button> -->
                     </div>
                     <div class="check" id="confirm">
-                        <a href="" id="confirmation" target="_blank" rel="noreferrer"><img src="./images/check.svg"></a>
+                        <a href="" id="confirmation" target="_blank" rel="noreferrer"><img src="./assets/check.svg"></a>
                     </div>
                 </div>
             </div>
@@ -63,5 +68,6 @@
     <script src="./scripts/idb.js"></script>
     <script src="./scripts/purse.js"></script>
     <script src="./scripts/helpers.js"></script>
+    <script src="./scripts/history.js"></script>
     <script src="./scripts/send.js"></script>
 </html>

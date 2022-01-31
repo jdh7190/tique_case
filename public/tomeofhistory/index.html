@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Tome of History - Tique Case</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta property="og:title" content="Tome of History - Tique Case"/>
+        <meta property="og:type" content="website">
+        <meta property="og:image:url" content="./assets/logo-512x512.png">
+        <meta property="og:image" content="./assets/logo-512x512.png">
+        <meta property="og:description" content="Your Keepsakes on Bitcoin">
+        <meta name="theme-color" content="#D3D3D3">
+        <meta name="description" content="Your Keepsakes on Bitcoin">
+        <meta name="twitter:card" content="summary"/>
+        <meta name="twitter:creator" content="@cryptoacorns"/>
+        <meta name="twitter:image" content="https://tique.run/images/logo-512x512.png"/>
+        <meta name="description" content="Your Keepsakes on Bitcoin">
+        <meta name="apple-mobile-web-app-title" content="Tique Case">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <link rel="manifest" href="../manifest.json">
+        <link rel="stylesheet" href = '../styles/ex.css'>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <script src="../scripts/fontawesome.js"></script>
+        <link rel="apple-touch-icon" href="./images/apple-touch-icon.png">
+        <link rel="icon" href="../favicon.ico">
+        <link rel="icon" type="image/png" sizes="32x32" href="../assets/favicon-32x32.png">
+        <link rel="icon" type="image/png" sizes="16x16" href="../assets/favicon-16x16.png">
+        <link href="https://fonts.googleapis.com/css2?family=Courier+Prime&family=Permanent+Marker&family=Roboto&family=Roboto+Slab&display=swap" rel="stylesheet">
+    </head>
+    <body>
+        <div id='menu' class="hamburgmenu" onclick='openSideNav()'><svg xmlns="http://www.w3.org/2000/svg" height="32px" viewBox="0 0 24 24" width="32px" fill="#000000"><path d="M0 0h24v24H0z" fill="none"/><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></div>
+        <div id='keep'>
+            <h1 class='title' id='tokenname'></h1>
+            <div class='section-sec up'>
+                <div class='font-sec desc' id="tokendesc"></div>
+                <div class='cardlist font-sec' id="keeplist"></div>
+                <div class="lds-ellipsis" id="loadingkeep"><div></div><div></div><div></div><div></div></div>
+            </div>
+        </div>
+        <div class='modal'>
+            <span class="modalclose" onclick='closeSideNav()'>&times;</span>
+            <div id='sidenav'>
+                <div class='center sidenav_logo'>
+                    <a href="../"><img src='../assets/tiquelogo.png' width='200px' height='200px'></a>
+                </div>
+                <a href="../settings.html" class="settingLink"><div class='simplebtn'>Settings</div></a>
+                <div class='center'>
+                    <div id='socialicons' class='fa-2x'>
+                        <a href="https://github.com/jdh7190/tique_case" target="_blank"><i class="fab fa-github"></i></a>
+                        <a href="https://twitter.com/cryptoAcorns" target="_blank"><i class="fab fa-twitter"></i></a>
+                        <a href="https://www.youtube.com/c/JoshuaHenslee" target="_blank"><i class="fab fa-youtube"></i></a>
+                        <a href="https://t.me/+c9ISZcdmXgU1MzIx" target="_blank"><i class="fab fa-telegram-plane"></i></a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div id='dModal' class='modal'>
+            <span class="modalclose" onclick='closeDModal()'>&times;</span>
+            <div class='modal-content perfectcenter'>
+                <img src="" id="buyimg" class="tokenlogo">
+                <div class="modalDiv">
+                    <p class='font-prim summary' id="msg"></p>
+                    <div class='simplebtn' id='buybtn'></div>
+                    <div class="buy-ellipsis" id="purchload"><div></div><div></div><div></div><div></div></div>
+                </div>
+            </div>
+        </div>
+        <script>
+            var sidenav = document.getElementById('sidenav').parentElement;
+            var dModal = document.getElementById('dModal');
+            var script;
+            onclick = event => {
+                if (event.target == sidenav) {
+                    sidenav.style.display = "none";
+                }
+                if (event.target == dModal) {
+                    dModal.style.display = "none";
+                }
+            }
+            const openSideNav = () => {
+                sidenav.style.display = 'block';
+            }
+            const closeSideNav = () => {
+                sidenav.style.display = 'none';
+            }
+            const closeDModal = () => {
+                dModal.style.display = 'none';
+            }
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('../serviceworker.js', { scope: './' })
+                .then(registration => {console.log('Registration successful, scope is:', registration.scope)})
+                .catch(error => {console.log('Service worker registration failed, error:', error)});
+            }
+        </script>
+        <script src="../scripts/bsv.browser.min.js" defer></script>
+        <script src="../scripts/config.js" defer></script>
+        <script src="../scripts/run.browser.min.js" defer></script>
+        <script src="../scripts/twemoji.min.js"></script>
+        <script src="../scripts/idb.js"></script>
+        <script src="../scripts/helpers.js"></script>
+        <script src="../scripts/purse.js" defer></script>
+        <script src="../scripts/orderLock.js"></script>
+        <script src="../scripts/history.js" defer></script>
+        <script src="../scripts/tome.js" defer></script>
+    </body>
+</html>

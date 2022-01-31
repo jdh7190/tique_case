@@ -1,7 +1,7 @@
 const urlParams = new URLSearchParams(location.search);
 var enforceAmt = true, tokens = [];
 initRun();
-run.trust(urlParams.get('loc').substr(0,64));
+run.trust(urlParams.get('loc').slice(0,64));
 trustContracts(run);
 const loadToken = async(loc) => {
     let balance = 0;
@@ -27,29 +27,16 @@ const loadToken = async(loc) => {
     }
 }
 const addToList = (contract, loc, balance, def) => {
-    let row = document.createElement('p');
-    let emojiSpan = document.createElement('span');
-    emojiSpan.className = "emoji";
-    emojiSpan = setImage(emojiSpan, contract?.metadata, def, contract.origin);
-    row.appendChild(emojiSpan);
-    let nameSpan = document.createElement('span');
-    nameSpan.id = 'contractName';
-    nameSpan.className = 'contractName';
-    nameSpan = setName(nameSpan, contract, def, loc, network, def ? true : false);
-    row.appendChild(nameSpan);
+    document.getElementById('img').innerHTML = setImage(contract?.metadata, def, contract.origin);
+    document.getElementById('contractName').innerText = setName(contract, def, loc, network, def ? true : false);
     if (balance) {
         document.getElementById('tokenamt').style.display = 'block';
-        let bal = document.createElement('span');
-        bal.className = "tokenBalance";
         if (contract.decimals > 0) {
             balance = balance / Math.pow(10, contract.decimals);
         }
-        bal.innerText = balance;
-        row.appendChild(bal);
+        document.getElementById('tokenBalance').innerText = balance;
     }
     else { enforceAmt = false }
-    let tokensDiv = document.getElementById('tokens');
-    tokensDiv.appendChild(row);
 }
 const sendTokens = async() => {
     let amt = document.getElementById('sendamt').value, pubkey = document.getElementById('sendaddr').value, pmail = false;
@@ -66,7 +53,7 @@ const sendTokens = async() => {
     if (!pubkey) { alert('Please specify a valid Address or alias.'); return }
     let contract = await run.load(urlParams.get('loc'));
     //await contract.sync();
-    if (contract?.interactive === undefined) { contract = contract.constructor }
+    if (contract?.interactive === undefined && !contract?.deps?.Token) { contract = contract.constructor }
     /* if (contract?.interactive !== false && pmail) {
         alert('Cannot send Interactive Tokens/Jigs to paymail!');
         return;
@@ -79,11 +66,15 @@ const sendTokens = async() => {
             if (amt) {
                 if (tokens.length > 1) { tx.update(() => tokens[0].combine(...tokens.slice(1))) }
                 tx.update(() => tokens[0].send(pubkey, amt));
-                await tx.publish();
-                if (tx) {
+                const hex = await tx.export();
+                const txid = await run.blockchain.broadcast(hex);
+                const t = { txid, hex };
+                const h = await evalRUNTx(t);
+                if (h) addEntry(h);
+                if (txid) {
                     document.getElementById('jigscon').style.display = 'none';
                     document.getElementById('confirm').style.display = 'block';
-                    document.getElementById('confirmation').href = `https://run.network/explorer/?query=${tokens[0].location.substr(0,64)}&network=${network}`;
+                    document.getElementById('confirmation').href = `https://run.network/explorer/?query=${txid}&network=${network}`;
                 }
             }
             else { throw 'Amount is incorrect.' }
@@ -103,10 +94,15 @@ const sendTokens = async() => {
             let jig = await run.load(urlParams.get('loc'));
             jig.send(pubkey);
             await jig.sync();
+            const txid = jig.location.substr(0,64);
+            const hex = await run.blockchain.fetch(txid);
+            const t = { txid, hex };
+            const h = await evalRUNTx(t);
+            if (h) addEntry(h);
             if (jig.owner === pubkey) {
                 document.getElementById('jigscon').style.display = 'none';
                 document.getElementById('confirm').style.display = 'block';
-                document.getElementById('confirmation').href = `https://run.network/explorer/?query=${jig.location.substr(0,64)}&network=${network}`;
+                document.getElementById('confirmation').href = `https://run.network/explorer/?query=${txid}&network=${network}`;
             }
         }
         catch (e) {
@@ -118,3 +114,25 @@ const sendTokens = async() => {
 }
 loadToken(urlParams.get('loc'));
 document.getElementById('sendjig').addEventListener('click', sendTokens);
+/* document.getElementById('burnjig').addEventListener('click', async() => {
+    let ftConfirm = false;
+    if (enforceAmt) {
+        ftConfirm = confirm(`Before continuing, please acknowledge that the entire token balance will be burnt.`);
+        if (!ftConfirm) { return }
+    }
+    const confirmBurn = confirm(`Are you sure you want to burn this token?`);
+    if (confirmBurn) {
+        const trueConfirm = confirm(`This action is irreversible and the token(s) will be lost forever.
+        
+A service fee of 1,000 satoshis is required. Are you sure you want to continue?`);
+        if (trueConfirm) {
+            if (enforceAmt) {
+                const b = await destroyJig(urlParams.get('loc'), tokens);
+                console.log(b)
+            } else {
+                const b = await destroyJig(urlParams.get('loc'));
+                console.log(b)
+            }
+        }
+    }
+}) */

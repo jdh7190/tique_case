@@ -1,0 +1,40 @@
+body {
+    background: #D3D3D3;
+    font-family: 'Roboto';
+}
+.approval {
+    margin: 10px;
+    font-size: 18px;
+}
+.permission {
+    font-weight: bold;
+    margin: 4px;
+}
+.login {
+    align-content: center;
+    position: absolute;
+    width: 159px;
+    height: 40px;
+    background: rgb(224, 141, 33);
+    opacity: 1;
+    border: 1px solid #000000;
+    box-sizing: border-box;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+    border-radius: 10px;
+    color: #ffffff;
+    transition-duration: 0.3s;
+    cursor: pointer;
+    left: 0;
+    right: 0;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+.login:hover {
+    opacity: 0.7;
+}
+.decline {
+    background-color: #D3D3D3;
+    margin-top: 60px;
+    color: black;
+}
